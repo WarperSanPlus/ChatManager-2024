@@ -1,0 +1,53 @@
+﻿<!DOCTYPE html>
+@{
+    var currentUser = ChatManager.Models.OnlineUsers.GetSessionUser();
+}
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Répertoire de films</title>
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr")
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+</head>
+<body>
+    <div class="navbar navbar-inverse navbar-fixed-top">
+        <div class="menu">
+            <div class="menuLeft">
+                @Helper.ImageCmd("Home", "About", "/info-icon.png", "menuIcon", "A propos...")
+                @if (currentUser != null)
+                {
+                    @Helper.ImageCmd("ChatRoom", "Index", "/Content/UI-Icons/chatRoom.png", "menuIcon", "Salle de clavardage...")
+                    @Helper.ImageCmd("Friendships", "Index", "/Content/UI-Icons/friendships.png", "menuIcon", "Gestion des amitiés...")
+                    if (currentUser.IsAdmin)
+                    {
+                        @Helper.IconCmd("Accounts", "UsersList", "menu-Icon fa fa-users", "Gestion des usagers...")
+                        @Helper.IconCmd("Accounts", "GroupEmail", "menu-Icon fa fa-envelope", "Envoi de courriel à un groupe d'usagers...")
+                        @Helper.IconCmd("Accounts", "LoginsJournal", "menu-Icon fa fa-calendar", "Journal des connexions...")
+                    }
+                }
+            </div>
+            @if (currentUser != null)
+            {
+                @Helper.avatarLink(currentUser.Avatar, "/Accounts/Profil")
+
+                @Helper.IconCmd("Accounts", "Logout", "menu-Icon fa fa-sign-out", "Se déconnecter...")
+            }
+            else
+            {
+                <span>&nbsp;</span>
+                @Helper.IconCmd("Accounts", "Login", "menu-Icon fa fa-sign-in", "Se connecter...")
+            }
+        </div>
+    </div>
+    <div class="container body-content">
+        @RenderBody()
+    </div>
+
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")
+    @RenderSection("scripts", required: false)
+</body>
+</html>

@@ -1,0 +1,37 @@
+﻿@{
+    ViewBag.Title = "À propos";
+}
+<div class="mainDetails">
+    <h3>À propos</h3>
+    <h4>Chat Manager</h4>
+
+    <p>Auteur: Nicolas Chourot</p>
+    <p><a href="mailto:Nicolas.Chourot@clg.qc.ca">Nicolas.Chourot@clg.qc.ca</a></p>
+<pre>
+    Département d'informatique
+    Collège Lionel-Groulx
+    Dans le cadre du cours 420-KBD-LG
+    Développement d'applications Web II
+</pre>
+    <hr />
+
+
+    <div style="display:grid; grid-template-columns: 60px auto ; background-color:black; align-items:center; color:white; border-radius:6px; padding:8px">
+        <img src="/info-icon.png" style="height: 36px; margin-top: 8px; margin-left: 5px;" />
+        <h4>Accès à cette page d'informations</h4>
+        <img src="/Content/UI-Icons/Friendships.png" style="height: 36px; margin-top: 8px; margin-left: 5px;" />
+        <h4>Gestions des amitiés</h4>
+        <img src="/Content/UI-Icons/chatRoom.png" style="height: 36px; margin-top: 8px; margin-left: 5px;" />
+        <h4>Salle de clavardage</h4>
+        <img src="/Images_Data/User_Avatars/no_avatar.png" style="height: 36px; margin-top: 8px; margin-left: 5px; border-radius:30px" />
+        <h4>Gestion de votre profil</h4>
+        <div style="height: 36px; margin-top: 15px; margin-left: 15px;">
+            @Helper.Icon("", "menu-Icon fa fa-sign-in", "")
+        </div>
+        <h4>Connexion</h4>
+        <div style="height: 36px; margin-top: 15px; margin-left: 15px;">
+            @Helper.Icon("", "menu-Icon fa fa-sign-out", "")
+        </div>
+        <h4>Déconnexion</h4>
+    </div>
+</div>
