@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Web;
 
-namespace MoviesDBManager.Models
+namespace ChatManager.Models
 {
     public class Entrer
     {

@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web.UI.WebControls;
-namespace MoviesDBManager.Models
+namespace ChatManager.Models
 {
     public class EntrerRepository: Repository<Entrer>
     {

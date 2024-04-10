@@ -6,9 +6,9 @@ using MoviesDBManager.Models;
 using Mail;
 using ChatManager.Models;
 using System.Web.UI.WebControls;
-namespace MoviesDBManager.Controllers
+namespace ChatManager.Controllers
 {
-    public class EntrerController
+    public class EntrerController : Controller
     {
 
 
