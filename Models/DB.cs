@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MoviesDBManager.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -12,14 +13,17 @@ namespace ChatManager.Models
         private static readonly DB instance = new DB();
 
         public static UsersRepository Users { get; set; }
+          public static EntrerRepository Entrers { get; set; }
         public static Repository<Gender> Genders { get; set; }
         public static Repository<UserType> UserTypes { get; set; }
         public static Repository<UnverifiedEmail> UnverifiedEmails { get; set; }
+
         public static Repository<ResetPasswordCommand> ResetPasswordCommands { get; set; }
        
         public DB()
         {
-            Users = new UsersRepository();
+            Entrers = new EntrerRepository();   
+           Users = new UsersRepository();
             Genders = new Repository<Gender>();
             UserTypes = new Repository<UserType>();
             UnverifiedEmails = new Repository<UnverifiedEmail>();

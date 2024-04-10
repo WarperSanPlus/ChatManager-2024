@@ -18,6 +18,8 @@ namespace ChatManager.Models
                 return (List<int>)HttpRuntime.Cache["OnLineUsers"];
             }
         }
+        public static List<(int,int)> SessionEnCour  = new List<(int, int)>();
+       
         #region Status change management
         private static string SerialNumber
         {
@@ -53,6 +55,7 @@ namespace ChatManager.Models
         {
             HttpContext.Current.Session["UserId"] = userId;
             ConnectedUsersId.Add(userId);
+            DB.Entrers.Create(new MoviesDBManager.Models.Entrer());
             SetHasChanged();
         }
         public static void RemoveSessionUser()
@@ -61,6 +64,7 @@ namespace ChatManager.Models
             if (user != null)
                 ConnectedUsersId.Remove(user.Id);
             HttpContext.Current?.Session.Abandon();
+              
             SetHasChanged();
         }
         public static bool IsOnLine(int userId)

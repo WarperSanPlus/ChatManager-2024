@@ -123,12 +123,15 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="Controllers\AccountsController.cs" />
     <Compile Include="Controllers\ChatRoomController.cs" />
+    <Compile Include="Controllers\EntrerController.cs" />
     <Compile Include="Controllers\FriendShipsController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\NotificationsController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Models\Entrer.cs" />
+    <Compile Include="Models\EntrerRepository.cs" />
     <Compile Include="Models\GroupEmail.cs" />
     <Compile Include="Models\EmailView.cs" />
     <Compile Include="Models\Gender.cs" />
