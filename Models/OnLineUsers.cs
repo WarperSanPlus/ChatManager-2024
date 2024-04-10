@@ -50,11 +50,7 @@ namespace Models
         {
             HttpContext.Current.Session["UserId"] = userId;
             ConnectedUsersId.Add(userId);
-<<<<<<< Updated upstream
-            DB.Entrers.Create(new Entrer());
-=======
             _ = EntrerRepository.Create(new Entrer());
->>>>>>> Stashed changes
             SetHasChanged();
         }
         public static void RemoveSessionUser()
