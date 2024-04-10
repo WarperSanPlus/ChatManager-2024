@@ -55,7 +55,7 @@ namespace ChatManager.Models
         {
             HttpContext.Current.Session["UserId"] = userId;
             ConnectedUsersId.Add(userId);
-            DB.Entrers.Create(new MoviesDBManager.Models.Entrer());
+            DB.Entrers.Create(new Entrer());
             SetHasChanged();
         }
         public static void RemoveSessionUser()

@@ -11,6 +11,7 @@ namespace ChatManager.Models
     {
        
         public int Id { get; set; } = 0;
+        public int IdUser { get; set; } = 0;
         public DateTime entrer { get; set; } = DateTime.Now;
 
         public DateTime? sortie { get; set; } = null;
