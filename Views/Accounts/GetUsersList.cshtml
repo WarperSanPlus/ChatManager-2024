@@ -1,11 +1,11 @@
-﻿@model IEnumerable<ChatManager.Models.User>
+﻿@model IEnumerable<Models.User>
 
 @foreach (var item in Model)
 {
-    if (item.Id != ChatManager.Models.OnlineUsers.GetSessionUser().Id)
+    if (item.Id != Models.OnlineUsers.GetSessionUser().Id)
     {
         var emailReference = "mailto:" + item.Email;
-        bool isOnline = ChatManager.Models.OnlineUsers.IsOnLine(item.Id);
+        bool isOnline = Models.OnlineUsers.IsOnLine(item.Id);
         <div class="userContainer" style="font-size:14px;">
             <a href="/Accounts/Edit/@item.Id" title="Compte créé le @item.CreationDate.ToShortDateString()">
                 @Helper.AvatarUser(item, "UserSmallAvatar")

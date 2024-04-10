@@ -4,7 +4,7 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 
-namespace ChatManager.Models
+namespace Models
 {
     // Auteur Nicolas Chourot
     public class SelectListUtilities<T>

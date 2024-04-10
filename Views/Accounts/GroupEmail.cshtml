@@ -1,4 +1,4 @@
-﻿@model ChatManager.Models.GroupEmail
+﻿@model Models.GroupEmail
 @{
     ViewBag.Title = "EmailGroup";
 }
@@ -22,7 +22,7 @@
                 <button id="DeSelectAll">Aucun</button>
             </div>
             <div style="overflow-y:scroll; overflow-x:hidden; border:1px solid #ccc; padding:10px; height:200px;">
-                @Helper.UsersCheckList((IEnumerable<ChatManager.Models.User>)ViewBag.Users, (List<int>)ViewBag.SelectedUsers, "SelectedUsers")
+                @Helper.UsersCheckList((IEnumerable<Models.User>)ViewBag.Users, (List<int>)ViewBag.SelectedUsers, "SelectedUsers")
             </div>
             <div id="Error_SelectedUsers" style="display:none" class="text-danger">Veuillez faire une sélection</div>
         </fieldset>

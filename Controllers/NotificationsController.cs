@@ -1,11 +1,8 @@
-﻿using ChatManager.Models;
-using System;
+﻿using Models;
 using System.Collections.Generic;
-using System.Linq;
-using System.Web;
 using System.Web.Mvc;
 
-namespace ChatManager.Controllers
+namespace Controllers
 {
     public class NotificationsController : Controller
     {
@@ -13,12 +10,13 @@ namespace ChatManager.Controllers
         public JsonResult Pop()
         {
             User loggedUser = OnlineUsers.GetSessionUser();
-            List<string> messages = new List<string>();
+            var messages = new List<string>();
             if (loggedUser != null)
             {
                 messages = OnlineUsers.PopNotifications(loggedUser.Id);
             }
-            return Json(messages, JsonRequestBehavior.AllowGet);
+
+            return this.Json(messages, JsonRequestBehavior.AllowGet);
         }
     }
 }

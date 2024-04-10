@@ -1,17 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web.Mvc;
-using MoviesDBManager.Models;
-using Mail;
-using ChatManager.Models;
-using System.Web.UI.WebControls;
-namespace ChatManager.Controllers
+﻿using System.Web.Mvc;
+namespace Controllers
 {
     public class EntrerController : Controller
     {
-
-
 
         //public ActionResult Entrer(bool forceRefresh = false)
         //{
@@ -22,7 +13,6 @@ namespace ChatManager.Controllers
         //    return null;
         //}
 
-
         //public ActionResult Creation(bool forceRefresh = false)
         //{
         //    return RedirectToAction("Indexs");
@@ -32,7 +22,6 @@ namespace ChatManager.Controllers
         //{
         //    return View();
         //}
-
 
     }
 }

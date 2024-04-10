@@ -103,7 +103,7 @@
         selectedCode = "us";
     }
     <select name="@controlId" class="form-control">
-        @foreach (var country in ChatManager.Models.Countries.List)
+        @foreach (var country in Models.Countries.List)
         {
             string selected = selectedCode == country.Code ? "selected" : "";
             <option value="@country.Code" @selected>@country.Name</option>
@@ -112,7 +112,7 @@
 }
 @helper CountryFlag(string countryCode)
 {
-    var country = ChatManager.Models.Countries.Get(countryCode);
+    var country = Models.Countries.Get(countryCode);
     if (country != null)
     {
         <img src="@country.Flag" title="@country.Name" style="width:40px;" />
@@ -125,7 +125,7 @@
              style="background: url(@avatar)"></div>
     </a>
 }
-@helper AvatarUser(ChatManager.Models.User user, string avatarClass = "UserMediumAvatar")
+@helper AvatarUser(Models.User user, string avatarClass = "UserMediumAvatar")
 {
     var Url = new System.Web.Mvc.UrlHelper(HttpContext.Current.Request.RequestContext);
     var avatarUrl = user.Avatar;
@@ -134,7 +134,7 @@
         <div class="ellipsis">@user.GetFullName()</div>
     </div>
 }
-@helper UsersCheckList(IEnumerable<ChatManager.Models.User> users, List<int> selectedUsers, string usersCheckListName = "UsersCheckList")
+@helper UsersCheckList(IEnumerable<Models.User> users, List<int> selectedUsers, string usersCheckListName = "UsersCheckList")
 {
     var Url = new System.Web.Mvc.UrlHelper(HttpContext.Current.Request.RequestContext);
 

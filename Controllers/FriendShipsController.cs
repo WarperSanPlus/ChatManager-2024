@@ -1,18 +1,11 @@
-﻿using ChatManager.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
+﻿using Models;
 using System.Web.Mvc;
 
-namespace MoviesDBManager.Controllers
+namespace Controllers
 {
     [OnlineUsers.UserAccess]
     public class FriendShipsController : Controller
     {
-        public ActionResult Index()
-        {
-            return View();
-        }
+        public ActionResult Index() => this.View();
     }
 }

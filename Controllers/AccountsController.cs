@@ -1,12 +1,13 @@
-﻿using System;
+﻿using Mail;
+using Models;
+using Repositories;
+using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Web.Mvc;
-using ChatManager.Models;
-using Mail;
 
-
-namespace ChatManager.Controllers
+namespace Controllers
 {
     public class AccountsController : Controller
     {
@@ -16,21 +17,18 @@ namespace ChatManager.Controllers
         public JsonResult EmailAvailable(string email)
         {
             User user = OnlineUsers.GetSessionUser();
-            int excludedId = user != null ? user.Id : 0;
-            return Json(DB.Users.EmailAvailable(email, excludedId));
+            var excludedId = user?.Id ?? 0;
+            return this.Json(UsersRepository.Instance.EmailAvailable(email, excludedId));
         }
 
         [HttpPost]
-        public JsonResult EmailExist(string email)
-        {
-            return Json(DB.Users.EmailExist(email));
-        }
+        public JsonResult EmailExist(string email) => this.Json(UsersRepository.Instance.EmailExist(email));
 
         public ActionResult Subscribe()
         {
-            ViewBag.Genders = SelectListUtilities<Gender>.Convert(DB.Genders.ToList());
-            User user = new User();
-            return View(user);
+            this.ViewBag.Genders = SelectListUtilities<Gender>.Convert(DB.GetRepo<Gender>().ToList());
+            var user = new User();
+            return this.View(user);
         }
 
         [HttpPost]
@@ -38,35 +36,36 @@ namespace ChatManager.Controllers
         public ActionResult Subscribe(User user)
         {
             user.UserTypeId = 3; // self subscribed user 
-            if (ModelState.IsValid)
+            if (this.ModelState.IsValid)
             {
                 if (user.Avatar == Models.User.DefaultImage)
                 {
                     // required avatar image
-                    ModelState.AddModelError("Avatar", "Veuillez choisir votre avatar");
-                    ViewBag.Genders = SelectListUtilities<Gender>.Convert(DB.Genders.ToList());
+                    this.ModelState.AddModelError("Avatar", "Veuillez choisir votre avatar");
+                    this.ViewBag.Genders = SelectListUtilities<Gender>.Convert(DB.GetRepo<Gender>().ToList());
                 }
                 else
                 {
-                    user = DB.Users.Create(user);
+                    user = UsersRepository.Instance.Create(user);
                     if (user != null)
                     {
-                        SendEmailVerification(user, user.Email);
-                        return RedirectToAction("SubscribeDone/" + user.Id.ToString());
+                        this.SendEmailVerification(user, user.Email);
+                        return this.RedirectToAction("SubscribeDone/" + user.Id.ToString());
                     }
                     else
-                        return RedirectToAction("Report", "Errors", new { message = "Échec de création de compte" });
+                    {
+                        return this.RedirectToAction("Report", "Errors", new { message = "Échec de création de compte" });
+                    }
                 }
             }
-            return View(user);
+
+            return this.View(user);
         }
 
         public ActionResult SubscribeDone(int id)
         {
-            User newlySubscribedUser = DB.Users.Get(id);
-            if (newlySubscribedUser != null)
-                return View(newlySubscribedUser);
-            return RedirectToAction("Login");
+            User newlySubscribedUser = UsersRepository.Instance.Get(id);
+            return newlySubscribedUser != null ? this.View(newlySubscribedUser) : (ActionResult)this.RedirectToAction("Login");
         }
         #endregion
 
@@ -75,20 +74,21 @@ namespace ChatManager.Controllers
         {
             if (user.Id != 0)
             {
-                UnverifiedEmail unverifiedEmail = DB.Users.Add_UnverifiedEmail(user.Id, newEmail);
+                UnverifiedEmail unverifiedEmail = UsersRepository.Instance.Add_UnverifiedEmail(user.Id, newEmail);
                 if (unverifiedEmail != null)
                 {
-                    string verificationUrl = Url.Action("VerifyUser", "Accounts", null, Request.Url.Scheme);
-                    String Link = @"<br/><a href='" + verificationUrl + "?code=" + unverifiedEmail.VerificationCode + @"' > Confirmez votre inscription...</a>";
+                    var verificationUrl = this.Url.Action("VerifyUser", "Accounts", null, this.Request.Url.Scheme);
+                    var Link = @"<br/><a href='" + verificationUrl + "?code=" + unverifiedEmail.VerificationCode + @"' > Confirmez votre inscription...</a>";
 
-                    String suffixe = "";
+                    var suffixe = "";
                     if (user.GenderId == 2)
                     {
                         suffixe = "e";
                     }
-                    string Subject = "Movies Database - Vérification d'inscription...";
 
-                    string Body = "Bonjour " + user.GetFullName(true) + @",<br/><br/>";
+                    var Subject = "Movies Database - Vérification d'inscription...";
+
+                    var Body = "Bonjour " + user.GetFullName(true) + @",<br/><br/>";
                     Body += @"Merci de vous être inscrit" + suffixe + " au site ChatManager. <br/>";
                     Body += @"Pour utiliser votre compte vous devez confirmer votre inscription en cliquant sur le lien suivant : <br/>";
                     Body += Link;
@@ -102,38 +102,33 @@ namespace ChatManager.Controllers
         }
         public ActionResult VerifyDone(int id)
         {
-            User newlySubscribedUser = DB.Users.Get(id);
-            if (newlySubscribedUser != null)
-                return View(newlySubscribedUser);
-            return RedirectToAction("Login");
+            User newlySubscribedUser = UsersRepository.Instance.Get(id);
+            return newlySubscribedUser != null ? this.View(newlySubscribedUser) : (ActionResult)this.RedirectToAction("Login");
         }
-        public ActionResult VerifyError()
-        {
-            return View();
-        }
-        public ActionResult AlreadyVerified()
-        {
-            return View();
-        }
+        public ActionResult VerifyError() => this.View();
+        public ActionResult AlreadyVerified() => this.View();
         public ActionResult VerifyUser(string code)
         {
-            UnverifiedEmail UnverifiedEmail = DB.Users.FindUnverifiedEmail(code);
+            UnverifiedEmail UnverifiedEmail = UsersRepository.Instance.FindUnverifiedEmail(code);
             if (UnverifiedEmail != null)
             {
-                User newlySubscribedUser = DB.Users.Get(UnverifiedEmail.UserId);
+                User newlySubscribedUser = UsersRepository.Instance.Get(UnverifiedEmail.UserId);
 
                 if (newlySubscribedUser != null)
                 {
-                    if (DB.Users.EmailVerified(newlySubscribedUser.Email))
-                        return RedirectToAction("AlreadyVerified");
+                    if (UsersRepository.Instance.EmailVerified(newlySubscribedUser.Email))
+                        return this.RedirectToAction("AlreadyVerified");
 
-                    if (DB.Users.Verify_User(newlySubscribedUser.Id, code))
-                        return RedirectToAction("VerifyDone/" + newlySubscribedUser.Id);
+                    if (UsersRepository.Instance.Verify_User(newlySubscribedUser.Id, code))
+                        return this.RedirectToAction("VerifyDone/" + newlySubscribedUser.Id);
                 }
                 else
-                    RedirectToAction("VerifyError");
+                {
+                    _ = this.RedirectToAction("VerifyError");
+                }
             }
-            return RedirectToAction("VerifyError");
+
+            return this.RedirectToAction("VerifyError");
         }
         #endregion
 
@@ -141,37 +136,26 @@ namespace ChatManager.Controllers
         public ActionResult EmailChangedAlert()
         {
             OnlineUsers.RemoveSessionUser();
-            return View();
+            return this.View();
         }
-        public ActionResult CommitEmailChange(string code)
-        {
-            if (DB.Users.ChangeEmail(code))
-            {
-                return RedirectToAction("EmailChanged");
-            }
-            return RedirectToAction("EmailChangedError");
-        }
-        public ActionResult EmailChanged()
-        {
-            return View();
-        }
-        public ActionResult EmailChangedError()
-        {
-            return View();
-        }
+        public ActionResult CommitEmailChange(string code) => UsersRepository.Instance.ChangeEmail(code)
+                ? this.RedirectToAction("EmailChanged")
+                : (ActionResult)this.RedirectToAction("EmailChangedError");
+        public ActionResult EmailChanged() => this.View();
+        public ActionResult EmailChangedError() => this.View();
         public void SendEmailChangedVerification(User user, string newEmail)
         {
             if (user.Id != 0)
             {
-                UnverifiedEmail unverifiedEmail = DB.Users.Add_UnverifiedEmail(user.Id, newEmail);
+                UnverifiedEmail unverifiedEmail = UsersRepository.Instance.Add_UnverifiedEmail(user.Id, newEmail);
                 if (unverifiedEmail != null)
                 {
-                    string verificationUrl = Url.Action("CommitEmailChange", "Accounts", null, Request.Url.Scheme);
-                    String Link = @"<br/><a href='" + verificationUrl + "?code=" + unverifiedEmail.VerificationCode + @"' > Confirmez votre adresse...</a>";
+                    var verificationUrl = this.Url.Action("CommitEmailChange", "Accounts", null, this.Request.Url.Scheme);
+                    var Link = @"<br/><a href='" + verificationUrl + "?code=" + unverifiedEmail.VerificationCode + @"' > Confirmez votre adresse...</a>";
 
-                    string Subject = "ChatManager - Confirmation de changement de courriel...";
+                    var Subject = "ChatManager - Confirmation de changement de courriel...";
 
-                    string Body = "Bonjour " + user.GetFullName(true) + @",<br/><br/>";
+                    var Body = "Bonjour " + user.GetFullName(true) + @",<br/><br/>";
                     Body += @"Vous avez modifié votre adresse de courriel. <br/>";
                     Body += @"Pour que ce changement soit pris en compte, vous devez confirmer cette adresse en cliquant sur le lien suivant : <br/>";
                     Body += Link;
@@ -186,32 +170,30 @@ namespace ChatManager.Controllers
         #endregion
 
         #region ResetPassword
-        public ActionResult ResetPasswordCommand()
-        {
-            return View();
-        }
+        public ActionResult ResetPasswordCommand() => this.View();
         [HttpPost]
         public ActionResult ResetPasswordCommand(string Email)
         {
-            if (ModelState.IsValid)
+            if (this.ModelState.IsValid)
             {
-                SendResetPasswordCommandEmail(Email);
-                return RedirectToAction("ResetPasswordCommandAlert");
+                this.SendResetPasswordCommandEmail(Email);
+                return this.RedirectToAction("ResetPasswordCommandAlert");
             }
-            return View(Email);
+
+            return this.View(Email);
         }
         public void SendResetPasswordCommandEmail(string email)
         {
-            ResetPasswordCommand resetPasswordCommand = DB.Users.Add_ResetPasswordCommand(email);
+            ResetPasswordCommand resetPasswordCommand = UsersRepository.Instance.Add_ResetPasswordCommand(email);
             if (resetPasswordCommand != null)
             {
-                User user = DB.Users.Get(resetPasswordCommand.UserId);
-                string verificationUrl = Url.Action("ResetPassword", "Accounts", null, Request.Url.Scheme);
-                String Link = @"<br/><a href='" + verificationUrl + "?code=" + resetPasswordCommand.VerificationCode + @"' > Réinitialisation de mot de passe...</a>";
+                User user = UsersRepository.Instance.Get(resetPasswordCommand.UserId);
+                var verificationUrl = this.Url.Action("ResetPassword", "Accounts", null, this.Request.Url.Scheme);
+                var Link = @"<br/><a href='" + verificationUrl + "?code=" + resetPasswordCommand.VerificationCode + @"' > Réinitialisation de mot de passe...</a>";
 
-                string Subject = "Répertoire de films - Réinitialisaton ...";
+                var Subject = "Répertoire de films - Réinitialisaton ...";
 
-                string Body = "Bonjour " + user.GetFullName(true) + @",<br/><br/>";
+                var Body = "Bonjour " + user.GetFullName(true) + @",<br/><br/>";
                 Body += @"Vous avez demandé de réinitialiser votre mot de passe. <br/>";
                 Body += @"Procédez en cliquant sur le lien suivant : <br/>";
                 Body += Link;
@@ -224,42 +206,28 @@ namespace ChatManager.Controllers
         }
         public ActionResult ResetPassword(string code)
         {
-            ResetPasswordCommand resetPasswordCommand = DB.Users.Find_ResetPasswordCommand(code);
-            if (resetPasswordCommand != null)
-                return View(new PasswordView() { Code = code });
-            return RedirectToAction("ResetPasswordError");
+            ResetPasswordCommand resetPasswordCommand = UsersRepository.Instance.Find_ResetPasswordCommand(code);
+            return resetPasswordCommand != null ? this.View(new PasswordView() { Code = code }) : (ActionResult)this.RedirectToAction("ResetPasswordError");
         }
         [HttpPost]
         [ValidateAntiForgeryToken()]
         public ActionResult ResetPassword(PasswordView passwordView)
         {
-            if (ModelState.IsValid)
+            if (this.ModelState.IsValid)
             {
-                ResetPasswordCommand resetPasswordCommand = DB.Users.Find_ResetPasswordCommand(passwordView.Code);
-                if (resetPasswordCommand != null)
-                {
-                    if (DB.Users.ResetPassword(resetPasswordCommand.UserId, passwordView.Password))
-                        return RedirectToAction("ResetPasswordSuccess");
-                    else
-                        return RedirectToAction("ResetPasswordError");
-                }
-                else
-                    return RedirectToAction("ResetPasswordError");
+                ResetPasswordCommand resetPasswordCommand = UsersRepository.Instance.Find_ResetPasswordCommand(passwordView.Code);
+                return resetPasswordCommand != null
+                    ? UsersRepository.Instance.ResetPassword(resetPasswordCommand.UserId, passwordView.Password)
+                        ? this.RedirectToAction("ResetPasswordSuccess")
+                        : (ActionResult)this.RedirectToAction("ResetPasswordError")
+                    : this.RedirectToAction("ResetPasswordError");
             }
-            return View(passwordView);
+
+            return this.View(passwordView);
         }
-        public ActionResult ResetPasswordCommandAlert()
-        {
-            return View();
-        }
-        public ActionResult ResetPasswordSuccess()
-        {
-            return View();
-        }
-        public ActionResult ResetPasswordError()
-        {
-            return View();
-        }
+        public ActionResult ResetPasswordCommandAlert() => this.View();
+        public ActionResult ResetPasswordSuccess() => this.View();
+        public ActionResult ResetPasswordError() => this.View();
         #endregion
 
         #region Profil
@@ -267,14 +235,14 @@ namespace ChatManager.Controllers
         public ActionResult Profil()
         {
             User userToEdit = OnlineUsers.GetSessionUser().Clone();
-            if (userToEdit != null)
-            {
-                ViewBag.Genders = new SelectList(DB.Genders.ToList(), "Id", "Name", userToEdit.GenderId);
-                Session["UnchangedPasswordCode"] = Guid.NewGuid().ToString().Substring(0, 12);
-                userToEdit.Password = userToEdit.ConfirmPassword = (string)Session["UnchangedPasswordCode"];
-                return View(userToEdit);
-            }
-            return null;
+
+            if (userToEdit == null)
+                return null;
+
+            this.ViewBag.Genders = new SelectList(DB.GetRepo<Gender>().ToList(), "Id", "Name", userToEdit.GenderId);
+            this.Session["UnchangedPasswordCode"] = Guid.NewGuid().ToString().Substring(0, 12);
+            userToEdit.Password = userToEdit.ConfirmPassword = (string)this.Session["UnchangedPasswordCode"];
+            return this.View(userToEdit);
         }
 
         [HttpPost]
@@ -288,10 +256,10 @@ namespace ChatManager.Controllers
             user.Blocked = currentUser.Blocked;
             user.CreationDate = currentUser.CreationDate;
 
-            string newEmail = "";
-            if (ModelState.IsValid)
+            var newEmail = "";
+            if (this.ModelState.IsValid)
             {
-                if (user.Password == (string)Session["UnchangedPasswordCode"])
+                if (user.Password == (string)this.Session["UnchangedPasswordCode"])
                     user.Password = user.ConfirmPassword = currentUser.Password;
 
                 if (user.Email != currentUser.Email)
@@ -300,19 +268,18 @@ namespace ChatManager.Controllers
                     user.Email = user.ConfirmEmail = currentUser.Email;
                 }
 
-                if (DB.Users.Update(user))
+                if (UsersRepository.Instance.Update(user))
                 {
-                    if (newEmail != "")
-                    {
-                        SendEmailChangedVerification(user, newEmail);
-                        return RedirectToAction("EmailChangedAlert");
-                    }
-                    else
-                        return Redirect((string)Session["LastAction"]);
+                    if (newEmail == "")
+                        return this.Redirect((string)this.Session["LastAction"]);
+                    
+                    this.SendEmailChangedVerification(user, newEmail);
+                    return this.RedirectToAction("EmailChangedAlert");
                 }
             }
-            ViewBag.Genders = new SelectList(DB.Genders.ToList(), "Id", "Name", user.GenderId);
-            return View(currentUser);
+
+            this.ViewBag.Genders = new SelectList(DB.GetRepo<Gender>().ToList(), "Id", "Name", user.GenderId);
+            return this.View(currentUser);
         }
         #endregion
 
@@ -321,81 +288,82 @@ namespace ChatManager.Controllers
         public ActionResult ExpiredSession()
         {
             OnlineUsers.RemoveSessionUser();
-            return Redirect("/Accounts/Login?message=Session expirée, veuillez vous reconnecter.");
+            return this.Redirect("/Accounts/Login?message=Session expirée, veuillez vous reconnecter.");
         }
         public ActionResult Login(string message)
         {
-            ViewBag.Message = message;
+            Debug.WriteLine("A");
+            this.ViewBag.Message = message;
             OnlineUsers.RemoveSessionUser();
-            return View(new LoginCredential());
+            return this.View(new LoginCredential());
         }
         [HttpPost]
         [ValidateAntiForgeryToken()]
         public ActionResult Login(LoginCredential loginCredential)
         {
-            if (ModelState.IsValid)
+            if (this.ModelState.IsValid)
             {
-                if (DB.Users.EmailBlocked(loginCredential.Email))
+                UsersRepository repo = UsersRepository.Instance;
+
+                if (repo.EmailBlocked(loginCredential.Email))
                 {
-                    ModelState.AddModelError("Email", "Ce compte est bloqué.");
-                    return View(loginCredential);
+                    this.ModelState.AddModelError("Email", "Ce compte est bloqué.");
+                    return this.View(loginCredential);
                 }
-                if (!DB.Users.EmailVerified(loginCredential.Email))
+
+                if (!repo.EmailVerified(loginCredential.Email))
                 {
-                    ModelState.AddModelError("Email", "Ce courriel n'est pas vérifié.");
-                    return View(loginCredential);
+                    this.ModelState.AddModelError("Email", "Ce courriel n'est pas vérifié.");
+                    return this.View(loginCredential);
                 }
-                User user = DB.Users.GetUser(loginCredential);
+
+                User user = repo.GetUser(loginCredential);
 
                 if (user == null)
                 {
-                    ModelState.AddModelError("Password", "Mot de passe incorrect.");
-                    return View(loginCredential);
+                    this.ModelState.AddModelError("Password", "Mot de passe incorrect.");
+                    return this.View(loginCredential);
                 }
+
                 OnlineUsers.AddSessionUser(user.Id);
                 OnlineUsers.AddNotification(user.Id, "Heureux de vous revoir");
-                return RedirectToAction("Index", "ChatRoom");
+                return this.RedirectToAction("Index", "ChatRoom");
             }
 
-            return View(loginCredential);
+            return this.View(loginCredential);
         }
         public ActionResult Logout()
         {
             OnlineUsers.RemoveSessionUser();
-            return RedirectToAction("Login");
+            return this.RedirectToAction("Login");
         }
-        
+
         [OnlineUsers.AdminAccess]
-        public ActionResult LoginsJournal()
-        {
-            return View();
-        }
+        public ActionResult LoginsJournal() => this.View();
         #endregion
         [OnlineUsers.AdminAccess]
         public ActionResult GroupEmail(string status = "")
         {
-            ViewBag.SelectedUsers = new List<int>();
-            ViewBag.Users = DB.Users.SortedUsers();
-            ViewBag.Status = status;
-            return View(new GroupEmail() { Message = "Bonjour [Nom]," });
+            this.ViewBag.SelectedUsers = new List<int>();
+            this.ViewBag.Users = UsersRepository.Instance.SortedUsers();
+            this.ViewBag.Status = status;
+            return this.View(new GroupEmail() { Message = "Bonjour [Nom]," });
         }
         [HttpPost]
         [ValidateAntiForgeryToken()]
         public ActionResult GroupEmail(GroupEmail groupEmail)
         {
-            if (ModelState.IsValid)
+            if (this.ModelState.IsValid)
             {
                 groupEmail.Send();
-                return RedirectToAction("GroupEmail", new { status = "Message envoyé avec succès." });
+                return this.RedirectToAction("GroupEmail", new { status = "Message envoyé avec succès." });
             }
-            ViewBag.Users = DB.Users.SortedUsers();
-            return View(groupEmail);
+
+            this.ViewBag.Users = UsersRepository.Instance.SortedUsers();
+            return this.View(groupEmail);
         }
         #region Administrator actions
-        public JsonResult NeedUpdate()
-        {
-            return Json(OnlineUsers.HasChanged(), JsonRequestBehavior.AllowGet);
-        }
+        public JsonResult NeedUpdate() => this.Json(OnlineUsers.HasChanged(), JsonRequestBehavior.AllowGet);
 
         [OnlineUsers.AdminAccess]
         public void SendBlockStatusEMail(User user)
@@ -405,9 +373,9 @@ namespace ChatManager.Controllers
             {
                 if (user.Blocked)
                 {
-                    string Subject = "Movies Database - Compte bloqué...";
+                    var Subject = "Movies Database - Compte bloqué...";
 
-                    string Body = "Désolé " + user.GetFullName(true) + @"<br/><br/>";
+                    var Body = "Désolé " + user.GetFullName(true) + @"<br/><br/>";
                     Body += @"Votre compte a été bloqué par le modérateur suite à des abus de votre part. <br/>";
                     Body += @"Pour pour plus d'informations veuillez écrire à <a href='mailto:" + currentAdmin.Email + @"'>" + currentAdmin.GetFullName(false) + "</a><br/>";
 
@@ -415,9 +383,9 @@ namespace ChatManager.Controllers
                 }
                 else
                 {
-                    string Subject = "Movies Database - Compte débloqué...";
+                    var Subject = "Movies Database - Compte débloqué...";
 
-                    string Body = "Bonjour " + user.GetFullName(true) + @"<br/><br/>";
+                    var Body = "Bonjour " + user.GetFullName(true) + @"<br/><br/>";
                     Body += @"Votre compte a été débloqué par le modérateur <br/><br/>";
                     Body += @"Bonne journée! <br/>";
 
@@ -428,22 +396,23 @@ namespace ChatManager.Controllers
         [OnlineUsers.AdminAccess]
         public JsonResult ChangeUserBlockedStatus(int userid, bool blocked)
         {
-            User user = DB.Users.Get(userid);
+            User user = UsersRepository.Instance.Get(userid);
             user.Blocked = blocked;
-            SendBlockStatusEMail(user);
-            return Json(DB.Users.Update(user), JsonRequestBehavior.AllowGet);
+            this.SendBlockStatusEMail(user);
+            return this.Json(UsersRepository.Instance.Update(user), JsonRequestBehavior.AllowGet);
         }
         public JsonResult PromoteUser(int userid)
         {
-            User user = DB.Users.Get(userid);
+            User user = UsersRepository.Instance.Get(userid);
             if (user != null)
             {
                 user.UserTypeId--;
                 if (user.UserTypeId <= 0)
                     user.UserTypeId = 3;
-                DB.Users.Update(user);
+                _ = UsersRepository.Instance.Update(user);
             }
-            return Json(DB.Users.Update(user), JsonRequestBehavior.AllowGet);
+
+            return this.Json(UsersRepository.Instance.Update(user), JsonRequestBehavior.AllowGet);
         }
         [OnlineUsers.AdminAccess]
         public void SendDeletedAccountEMail(User user)
@@ -451,9 +420,9 @@ namespace ChatManager.Controllers
             User currentAdmin = OnlineUsers.GetSessionUser();
             if (user != null)
             {
-                string Subject = "Movies Database - Compte bloqué...";
+                var Subject = "Movies Database - Compte bloqué...";
 
-                string Body = "Désolé " + user.GetFullName(true) + @"<br/><br/>";
+                var Body = "Désolé " + user.GetFullName(true) + @"<br/><br/>";
                 Body += @"Votre compte a été retiré par le modérateur suite à des abus de votre part. <br/>";
                 Body += @"Pour pour plus d'informations veuillez écrire à <a href='mailto:" + currentAdmin.Email + @"'>" + currentAdmin.GetFullName(false) + "</a><br/>";
 
@@ -463,33 +432,24 @@ namespace ChatManager.Controllers
         [OnlineUsers.AdminAccess]
         public JsonResult Delete(int userid)
         {
-            User userToDelete = DB.Users.Get(userid);
+            User userToDelete = UsersRepository.Instance.Get(userid);
             if (userToDelete != null)
             {
-                SendDeletedAccountEMail(userToDelete);
-                return Json(DB.Users.Delete(userid), JsonRequestBehavior.AllowGet);
+                this.SendDeletedAccountEMail(userToDelete);
+                return this.Json(UsersRepository.Instance.Delete(userid), JsonRequestBehavior.AllowGet);
             }
             else
             {
-                return Json(false, JsonRequestBehavior.AllowGet);
+                return this.Json(false, JsonRequestBehavior.AllowGet);
             }
         }
         [OnlineUsers.AdminAccess]
-        public ActionResult UsersList()
-        {
-            return View();
-        }
+        public ActionResult UsersList() => this.View();
         [OnlineUsers.AdminAccess]
-        public ActionResult GetUsersList(bool forceRefresh = false)
-        {
-            if (forceRefresh || OnlineUsers.HasChanged() || DB.Users.HasChanged)
-            {
-                return PartialView(DB.Users.SortedUsers());
-            }
-            return null;
-        }
+        public ActionResult GetUsersList(bool forceRefresh = false) => forceRefresh || OnlineUsers.HasChanged() || UsersRepository.Instance.HasChanged
+                ? this.PartialView(UsersRepository.Instance.SortedUsers())
+                : (ActionResult)null;
 
-        
         #endregion
 
     }

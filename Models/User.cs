@@ -1,11 +1,10 @@
-﻿using Newtonsoft.Json;
+﻿using Attributes;
+using Newtonsoft.Json;
+using Repositories;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Web;
 
-namespace ChatManager.Models
+namespace Models
 {
     public class User
     {
@@ -13,12 +12,10 @@ namespace ChatManager.Models
         public const string Default_Avatar = @"no_avatar.png";
 
         [JsonIgnore]
-        public static string DefaultImage {  get { return User_Avatars_Folder + Default_Avatar; } }
+        public static string DefaultImage => User_Avatars_Folder + Default_Avatar;
 
-        public User Clone()
-        {
-            return JsonConvert.DeserializeObject<User>(JsonConvert.SerializeObject(this));
-        }
+        public User Clone() => JsonConvert.DeserializeObject<User>(JsonConvert.SerializeObject(this));
+
         #region Data Members
         public int Id { get; set; } = 0;
         public int UserTypeId { get; set; } = 3;
@@ -45,7 +42,7 @@ namespace ChatManager.Models
         [Display(Name = "Mot de passe"), Required(ErrorMessage = "Obligatoire")]
         [StringLength(50, ErrorMessage = "Le mot de passe doit comporter au moins {2} caractères.", MinimumLength = 6)]
         [DataType(DataType.Password)]
-        public String Password { get; set; }
+        public string Password { get; set; }
 
         [JsonIgnore]
         [Display(Name = "Confirmation")]
@@ -65,24 +62,27 @@ namespace ChatManager.Models
         #region View members
 
         [JsonIgnore]
-        public Gender Gender { get { return DB.Genders.Get(GenderId); } }
+        public Gender Gender => DB.GetRepo<Gender>().Get(this.GenderId);
+        
         [JsonIgnore]
-        public UserType UserType { get { return DB.UserTypes.Get(UserTypeId); } }
+        public UserType UserType => DB.GetRepo<UserType>().Get(this.UserTypeId);
+
         [JsonIgnore]
-        public bool IsPowerUser { get { return UserTypeId <= 2 /* Admin = 1 , PowerUser = 2 */; } }
+        public bool IsPowerUser => this.UserTypeId <= 2 /* Admin = 1 , PowerUser = 2 */;
+        
         [JsonIgnore]
-        public bool IsAdmin { get { return UserTypeId == 1 /* Admin */; } }
+        public bool IsAdmin => this.UserTypeId == 1 /* Admin */;
 
         public string GetFullName(bool showGender = false)
         {
             if (showGender)
             {
-                if (Gender.Name != "Neutre")
-                    return Gender.Name + " " + LastName;
+                if (this.Gender.Name != "Neutre")
+                    return this.Gender.Name + " " + this.LastName;
             }
-            return FirstName + " " + LastName;
+
+            return this.FirstName + " " + this.LastName;
         }
         #endregion
     }
-
 }

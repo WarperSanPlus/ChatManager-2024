@@ -1,8 +1,9 @@
 ﻿using Mail;
+using Repositories;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
-namespace ChatManager.Models
+namespace Models
 {
     public class GroupEmail
     {
@@ -16,14 +17,14 @@ namespace ChatManager.Models
 
         public void Send()
         {
-            if (SelectedUsers != null)
+            if (this.SelectedUsers == null)
+                return;
+
+            foreach (var userId in this.SelectedUsers)
             {
-                foreach (int userId in SelectedUsers)
-                {
-                    User user = DB.Users.Get(userId);
-                    string personalizedMessage = Message.Replace("[Nom]", user.GetFullName(true)).Replace("\r\n", @"<br>");
-                    SMTP.SendEmail(user.GetFullName(), user.Email, Subject, personalizedMessage);
-                }
+                User user = UsersRepository.GetUser(userId);
+                var personalizedMessage = this.Message.Replace("[Nom]", user.GetFullName(true)).Replace("\r\n", @"<br>");
+                SMTP.SendEmail(user.GetFullName(), user.Email, this.Subject, personalizedMessage);
             }
         }
     }

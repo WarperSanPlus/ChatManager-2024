@@ -4,41 +4,37 @@ using System.IO;
 using System.Linq;
 using System.Web;
 
-namespace ChatManager.Models
+namespace Models
 {
     public class Country
     {
-        const string FlagCDN = @"https://flagcdn.com/";
+        private const string FlagCDN = @"https://flagcdn.com/";
         public string Code { get; set; }
         public string Name { get; set; }
-        public string Flag { get { return FlagCDN + Code + ".svg"; } }
-        public string SmallFlag { get { return FlagCDN + @"w40/" + Code + ".png"; } }
+        public string Flag => FlagCDN + this.Code + ".svg";
+        public string SmallFlag => FlagCDN + @"w40/" + this.Code + ".png";
     }
 
     public sealed class Countries
     {
         #region private members and methods
-        private static readonly Countries instance = new Countries();
-        public static Countries Instance
-        {
-            get { return instance; }
-        }
-        private static string Iso3166File = @"~/App_Data/iso-3166.txt";
-        private static List<Country> _countries = new List<Country>();
+        public static Countries Instance { get; } = new Countries();
+        private static readonly string Iso3166File = @"~/App_Data/iso-3166.txt";
+        private static readonly List<Country> _countries = new List<Country>();
         private static void LoadCountries()
         {
             var httpServerUtility = new HttpServerUtilityWrapper(HttpContext.Current.Server);
-            string iso3166Path = httpServerUtility.MapPath(Iso3166File);
+            var iso3166Path = httpServerUtility.MapPath(Iso3166File);
             try
             {
                 // Create a StreamReader  
-                using (StreamReader reader = new StreamReader(iso3166Path))
+                using (var reader = new StreamReader(iso3166Path))
                 {
                     string line;
                     // Read line by line  
                     while ((line = reader.ReadLine()) != null)
                     {
-                        string[] token = line.Split(new char[] { ',' });
+                        var token = line.Split(new char[] { ',' });
                         _countries.Add(new Country() { Code = token[0].ToLower().Trim(), Name = token[1].Trim() });
                     }
                 }
@@ -61,13 +57,13 @@ namespace ChatManager.Models
         }
         public static Country Get(string code)
         {
-            var country = List.FirstOrDefault(c => c.Code == code);
+            Country country = List.FirstOrDefault(c => c.Code == code);
             return country;
         }
         public static string FlagUrl(string code)
         {
-            string url = string.Empty;
-            var country = Get(code);
+            var url = string.Empty;
+            Country country = Get(code);
             if (country != null)
                 url = country.Flag;
             return url;
