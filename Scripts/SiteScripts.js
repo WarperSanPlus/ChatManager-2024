@@ -1,13 +1,4 @@
-﻿
-
-
-//window.addEventListener('beforeunload', function (e) {
-//    window.location.replace("/Entrer/DeconnextionImprevue");
-//});
-
-
-
-$(document).ready(function () {
+﻿$(document).ready(function () {
     /*$('.phone').mask('(999) 999-9999');
     $('.zipcode').mask('a9a 9a9');*/
     $(".datepicker").datepicker({
