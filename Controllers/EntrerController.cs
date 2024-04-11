@@ -1,4 +1,6 @@
-﻿using System.Web.Mvc;
+﻿using Models;
+using Repositories;
+using System.Web.Mvc;
 namespace Controllers
 {
     public class EntrerController : Controller
@@ -22,6 +24,11 @@ namespace Controllers
         //{
         //    return View();
         //}
+        public ActionResult DeconnextionImprevue()
+        {
+            EntrerRepository.Instance.Create(new Entrer());
+            return View();
+        }
 
     }
 }

@@ -1,4 +1,13 @@
-﻿$(document).ready(function () {
+﻿
+
+
+//window.addEventListener('beforeunload', function (e) {
+//    window.location.replace("/Entrer/DeconnextionImprevue");
+//});
+
+
+
+$(document).ready(function () {
     /*$('.phone').mask('(999) 999-9999');
     $('.zipcode').mask('a9a 9a9');*/
     $(".datepicker").datepicker({
@@ -23,6 +32,15 @@
             $(this).val(r);
         } catch (e) { }
     });
+    window.addEventListener('beforeunload', function (e) {
+     
+        $.ajax({
+            type: 'POST',
+            url: '/Entrer/DeconnextionImprevue',
+            async: true
+        });
+    });
+
 })
 
 function InstallAutoComplete(targetId, words) {
@@ -72,5 +90,6 @@ function InstallAutoComplete(targetId, words) {
                 return false;
             }
         });
+   
 };
 
