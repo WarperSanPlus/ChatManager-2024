@@ -48,7 +48,15 @@ namespace Repositories
                 return false;
             }
         }
+        public Entrer GetEntrer(int IDUser)
+        {
+            var entrerList = Instance.ToList().Where(e => e.IdUser == IDUser);
 
+            // Trier les entrées par ordre décroissant de dateTime d'entrée
+            var latestEntrer = entrerList.OrderByDescending(e => e.entrer).FirstOrDefault();
+
+            return latestEntrer;
+        }
         public IEnumerable<Entrer> GetEntrers() => Instance.ToList().OrderByDescending(e => e.entrer);
     }
 }

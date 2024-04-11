@@ -1,5 +1,6 @@
 ﻿using Models;
 using Repositories;
+using System;
 using System.Web.Mvc;
 namespace Controllers
 {
@@ -26,7 +27,14 @@ namespace Controllers
         //}
         public ActionResult DeconnextionImprevue()
         {
-            EntrerRepository.Instance.Create(new Entrer());
+            User user = OnlineUsers.GetSessionUser();
+            if (user != null)
+            {
+                Entrer NouvelEntrer = EntrerRepository.Instance.GetEntrer(user.Id);
+                NouvelEntrer.sortie = NouvelEntrer.entrer;
+                EntrerRepository.Instance.Update(NouvelEntrer);
+            }
+     
             return View();
         }
 

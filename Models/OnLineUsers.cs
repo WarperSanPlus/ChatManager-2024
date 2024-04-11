@@ -50,7 +50,7 @@ namespace Models
         {
             HttpContext.Current.Session["UserId"] = userId;
             ConnectedUsersId.Add(userId);
-            // EntrerRepository.Instance.Create(new Entrer());
+             EntrerRepository.Instance.Create(new Entrer());
        
             SetHasChanged();
         }
@@ -58,9 +58,13 @@ namespace Models
         {
             User user = GetSessionUser();
             if (user != null)
-                _ = ConnectedUsersId.Remove(user.Id);
-            HttpContext.Current?.Session.Abandon();
-
+            {
+                ConnectedUsersId.Remove(user.Id);
+                HttpContext.Current?.Session.Abandon();
+                Entrer NouvelEntrer = EntrerRepository.Instance.GetEntrer(user.Id);
+                NouvelEntrer.sortie = DateTime.Now;
+                EntrerRepository.Instance.Update(NouvelEntrer);
+            }
             SetHasChanged();
         }
         public static bool IsOnLine(int userId) => ConnectedUsersId.Contains(userId);
