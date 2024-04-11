@@ -50,6 +50,8 @@ namespace Models
         {
             HttpContext.Current.Session["UserId"] = userId;
             ConnectedUsersId.Add(userId);
+            Entrer enter = new Entrer();
+            enter.IdUser = userId;
              EntrerRepository.Instance.Create(new Entrer());
        
             SetHasChanged();
