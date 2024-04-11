@@ -7,7 +7,8 @@ namespace Repositories
 {
     public class EntrerRepository : Repository<Entrer>
     {
-        public static Entrer Create(Entrer entrer)
+        public static EntrerRepository Instance => (EntrerRepository)DB.GetRepo<Entrer>();
+        public  Entrer Create(Entrer entrer)
         {
             try
             {

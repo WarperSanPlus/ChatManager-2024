@@ -50,7 +50,8 @@ namespace Models
         {
             HttpContext.Current.Session["UserId"] = userId;
             ConnectedUsersId.Add(userId);
-            _ = EntrerRepository.Create(new Entrer());
+            EntrerRepository.Instance.Create(new Entrer());
+       
             SetHasChanged();
         }
         public static void RemoveSessionUser()
