@@ -317,7 +317,6 @@ namespace Controllers
 
         public ActionResult Login(string message)
         {
-            Debug.WriteLine("A");
             this.ViewBag.Message = message;
             OnlineUsers.RemoveSessionUser();
             return this.View(new LoginCredential());

@@ -52,7 +52,7 @@ namespace Models
             ConnectedUsersId.Add(userId);
             Entrer enter = new Entrer();
             enter.IdUser = userId;
-             EntrerRepository.Instance.Create(new Entrer());
+            EntrerRepository.Instance.Create(enter);
        
             SetHasChanged();
         }
