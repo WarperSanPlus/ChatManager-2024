@@ -12,7 +12,7 @@ namespace Repositories
         {
             try
             {
-                entrer.Id = DB.GetRepo<Entrer>().Add(entrer);
+                entrer.Id = this.Add(entrer);
                 return entrer;
             }
             catch (Exception ex)
