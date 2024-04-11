@@ -378,7 +378,7 @@ namespace Controllers
         {
             EntrerRepository repo = EntrerRepository.Instance;
 
-            if (!forceRefresh && !repo.HasChanged)
+            if (!forceRefresh && !repo.HasChanged && !UsersRepository.Instance.HasChanged)
                 return null;
 
             IEnumerable<Entrer> entries = repo.GetEntrers();
