@@ -176,6 +176,7 @@
     <Content Include="Content\jquery-ui.theme.css" />
     <Content Include="Content\popup.css" />
     <Content Include="Content\selectionControl.css" />
+    <Content Include="Content\LoginJournalStyles.css" />
     <Content Include="Content\UI-Icons\Abort.png" />
     <Content Include="Content\UI-Icons\Accept.png" />
     <Content Include="Content\UI-Icons\admin.png" />
@@ -300,6 +301,8 @@
     <Content Include="Views\ChatRoom\Index.cshtml" />
     <Content Include="Views\Accounts\LoginsJournal.cshtml" />
     <Content Include="Views\FriendShips\Index.cshtml" />
+    <Content Include="Views\Accounts\LoginEntry.cshtml" />
+    <Content Include="Views\Accounts\GetEntries.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Views\Notifications\" />

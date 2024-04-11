@@ -8,7 +8,8 @@ namespace Repositories
     public class EntrerRepository : Repository<Entrer>
     {
         public static EntrerRepository Instance => (EntrerRepository)DB.GetRepo<Entrer>();
-        public  Entrer Create(Entrer entrer)
+
+        public Entrer Create(Entrer entrer)
         {
             try
             {
@@ -48,6 +49,6 @@ namespace Repositories
             }
         }
 
-        public IEnumerable<Entrer> SortedUsers() => this.ToList().OrderBy(u => u.entrer);
+        public IEnumerable<Entrer> GetEntrers() => Instance.ToList().OrderByDescending(e => e.entrer);
     }
 }

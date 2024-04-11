@@ -1,7 +1,17 @@
-﻿
-@{
+﻿@{
     ViewBag.Title = "LoginsJournal";
 }
 
 <h2>Journal des connexions</h2>
+<div id="EntriesListContainer"></div>
 
+@section Scripts {
+    <script defer>
+        initTimeout(120);
+        let entries = new PartialRefresh("@Url.Action("GetEntries")", "EntriesListContainer", 5);
+    </script>
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/Content/LoginJournalStyles.css"/>
+}

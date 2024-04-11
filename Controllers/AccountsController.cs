@@ -11,8 +11,8 @@ namespace Controllers
 {
     public class AccountsController : Controller
     {
-
         #region Account creation
+
         [HttpPost]
         public JsonResult EmailAvailable(string email)
         {
@@ -35,7 +35,7 @@ namespace Controllers
         [ValidateAntiForgeryToken()]
         public ActionResult Subscribe(User user)
         {
-            user.UserTypeId = 3; // self subscribed user 
+            user.UserTypeId = 3; // self subscribed user
             if (this.ModelState.IsValid)
             {
                 if (user.Avatar == Models.User.DefaultImage)
@@ -67,9 +67,11 @@ namespace Controllers
             User newlySubscribedUser = UsersRepository.Instance.Get(id);
             return newlySubscribedUser != null ? this.View(newlySubscribedUser) : (ActionResult)this.RedirectToAction("Login");
         }
-        #endregion
+
+        #endregion Account creation
 
         #region Account Verification
+
         public void SendEmailVerification(User user, string newEmail)
         {
             if (user.Id != 0)
@@ -100,13 +102,17 @@ namespace Controllers
                 }
             }
         }
+
         public ActionResult VerifyDone(int id)
         {
             User newlySubscribedUser = UsersRepository.Instance.Get(id);
             return newlySubscribedUser != null ? this.View(newlySubscribedUser) : (ActionResult)this.RedirectToAction("Login");
         }
+
         public ActionResult VerifyError() => this.View();
+
         public ActionResult AlreadyVerified() => this.View();
+
         public ActionResult VerifyUser(string code)
         {
             UnverifiedEmail UnverifiedEmail = UsersRepository.Instance.FindUnverifiedEmail(code);
@@ -130,19 +136,25 @@ namespace Controllers
 
             return this.RedirectToAction("VerifyError");
         }
-        #endregion
+
+        #endregion Account Verification
 
         #region EmailChange
+
         public ActionResult EmailChangedAlert()
         {
             OnlineUsers.RemoveSessionUser();
             return this.View();
         }
+
         public ActionResult CommitEmailChange(string code) => UsersRepository.Instance.ChangeEmail(code)
                 ? this.RedirectToAction("EmailChanged")
                 : (ActionResult)this.RedirectToAction("EmailChangedError");
+
         public ActionResult EmailChanged() => this.View();
+
         public ActionResult EmailChangedError() => this.View();
+
         public void SendEmailChangedVerification(User user, string newEmail)
         {
             if (user.Id != 0)
@@ -167,10 +179,13 @@ namespace Controllers
                 }
             }
         }
-        #endregion
+
+        #endregion EmailChange
 
         #region ResetPassword
+
         public ActionResult ResetPasswordCommand() => this.View();
+
         [HttpPost]
         public ActionResult ResetPasswordCommand(string Email)
         {
@@ -182,6 +197,7 @@ namespace Controllers
 
             return this.View(Email);
         }
+
         public void SendResetPasswordCommandEmail(string email)
         {
             ResetPasswordCommand resetPasswordCommand = UsersRepository.Instance.Add_ResetPasswordCommand(email);
@@ -204,11 +220,13 @@ namespace Controllers
                 SMTP.SendEmail(user.GetFullName(), user.Email, Subject, Body);
             }
         }
+
         public ActionResult ResetPassword(string code)
         {
             ResetPasswordCommand resetPasswordCommand = UsersRepository.Instance.Find_ResetPasswordCommand(code);
             return resetPasswordCommand != null ? this.View(new PasswordView() { Code = code }) : (ActionResult)this.RedirectToAction("ResetPasswordError");
         }
+
         [HttpPost]
         [ValidateAntiForgeryToken()]
         public ActionResult ResetPassword(PasswordView passwordView)
@@ -225,12 +243,17 @@ namespace Controllers
 
             return this.View(passwordView);
         }
+
         public ActionResult ResetPasswordCommandAlert() => this.View();
+
         public ActionResult ResetPasswordSuccess() => this.View();
+
         public ActionResult ResetPasswordError() => this.View();
-        #endregion
+
+        #endregion ResetPassword
 
         #region Profil
+
         [OnlineUsers.UserAccess]
         public ActionResult Profil()
         {
@@ -272,7 +295,7 @@ namespace Controllers
                 {
                     if (newEmail == "")
                         return this.Redirect((string)this.Session["LastAction"]);
-                    
+
                     this.SendEmailChangedVerification(user, newEmail);
                     return this.RedirectToAction("EmailChangedAlert");
                 }
@@ -281,7 +304,8 @@ namespace Controllers
             this.ViewBag.Genders = new SelectList(DB.GetRepo<Gender>().ToList(), "Id", "Name", user.GenderId);
             return this.View(currentUser);
         }
-        #endregion
+
+        #endregion Profil
 
         #region Login and Logout
 
@@ -290,6 +314,7 @@ namespace Controllers
             OnlineUsers.RemoveSessionUser();
             return this.Redirect("/Accounts/Login?message=Session expirée, veuillez vous reconnecter.");
         }
+
         public ActionResult Login(string message)
         {
             Debug.WriteLine("A");
@@ -297,6 +322,7 @@ namespace Controllers
             OnlineUsers.RemoveSessionUser();
             return this.View(new LoginCredential());
         }
+
         [HttpPost]
         [ValidateAntiForgeryToken()]
         public ActionResult Login(LoginCredential loginCredential)
@@ -332,6 +358,7 @@ namespace Controllers
 
             return this.View(loginCredential);
         }
+
         public ActionResult Logout()
         {
             OnlineUsers.RemoveSessionUser();
@@ -339,8 +366,31 @@ namespace Controllers
         }
 
         [OnlineUsers.AdminAccess]
-        public ActionResult LoginsJournal() => this.View();
-        #endregion
+        public ActionResult LoginsJournal()
+        {
+             // this.ViewBag.Entries = EntrerRepository.GetEntrers();
+
+            return this.View();
+        }
+
+        [OnlineUsers.AdminAccess]
+        public ActionResult GetEntries(bool forceRefresh = false)
+        {
+            EntrerRepository repo = EntrerRepository.Instance;
+
+            if (!forceRefresh && !repo.HasChanged)
+                return null;
+
+            IEnumerable<Entrer> entries = repo.GetEntrers();
+
+            foreach (Entrer item in entries)
+                item.User = UsersRepository.GetUser(item.IdUser);
+
+            return this.PartialView(entries.GroupBy(e => e.entrer.Date));
+        }
+
+        #endregion Login and Logout
+
         [OnlineUsers.AdminAccess]
         public ActionResult GroupEmail(string status = "")
         {
@@ -349,6 +399,7 @@ namespace Controllers
             this.ViewBag.Status = status;
             return this.View(new GroupEmail() { Message = "Bonjour [Nom]," });
         }
+
         [HttpPost]
         [ValidateAntiForgeryToken()]
         public ActionResult GroupEmail(GroupEmail groupEmail)
@@ -362,7 +413,9 @@ namespace Controllers
             this.ViewBag.Users = UsersRepository.Instance.SortedUsers();
             return this.View(groupEmail);
         }
+
         #region Administrator actions
+
         public JsonResult NeedUpdate() => this.Json(OnlineUsers.HasChanged(), JsonRequestBehavior.AllowGet);
 
         [OnlineUsers.AdminAccess]
@@ -393,6 +446,7 @@ namespace Controllers
                 }
             }
         }
+
         [OnlineUsers.AdminAccess]
         public JsonResult ChangeUserBlockedStatus(int userid, bool blocked)
         {
@@ -401,6 +455,7 @@ namespace Controllers
             this.SendBlockStatusEMail(user);
             return this.Json(UsersRepository.Instance.Update(user), JsonRequestBehavior.AllowGet);
         }
+
         public JsonResult PromoteUser(int userid)
         {
             User user = UsersRepository.Instance.Get(userid);
@@ -414,6 +469,7 @@ namespace Controllers
 
             return this.Json(UsersRepository.Instance.Update(user), JsonRequestBehavior.AllowGet);
         }
+
         [OnlineUsers.AdminAccess]
         public void SendDeletedAccountEMail(User user)
         {
@@ -429,6 +485,7 @@ namespace Controllers
                 SMTP.SendEmail(user.GetFullName(), user.Email, Subject, Body);
             }
         }
+
         [OnlineUsers.AdminAccess]
         public JsonResult Delete(int userid)
         {
@@ -443,14 +500,15 @@ namespace Controllers
                 return this.Json(false, JsonRequestBehavior.AllowGet);
             }
         }
+
         [OnlineUsers.AdminAccess]
         public ActionResult UsersList() => this.View();
+
         [OnlineUsers.AdminAccess]
         public ActionResult GetUsersList(bool forceRefresh = false) => forceRefresh || OnlineUsers.HasChanged() || UsersRepository.Instance.HasChanged
                 ? this.PartialView(UsersRepository.Instance.SortedUsers())
                 : (ActionResult)null;
 
-        #endregion
-
+        #endregion Administrator actions
     }
 }

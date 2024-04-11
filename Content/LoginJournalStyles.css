@@ -1,0 +1,50 @@
+﻿/* DAY */
+.entry-day {
+    display: flex;
+    align-items: center;
+}
+
+.entry-delete {
+    margin-left: 0.25em;
+    font-size: 2em;
+    color: blue;
+}
+
+/* ENTRY */
+.entry {
+    display: flex;
+    margin: 1em auto;
+}
+
+/* USER */
+.entry-user {
+    flex: 1;
+}
+
+/* DATE */
+.entry-date {
+    display: grid;
+    align-content: center;
+    align-items: center;
+    justify-content: start;
+    grid-auto-flow: column;
+}
+
+.date-separator {
+    margin: 0 0.5em;
+}
+
+.date-field {
+    width: 40px;
+}
+
+.date-field,
+.date-separator {
+    user-select: none;
+}
+
+/* TIME OUT */
+.TimeOut {
+    background-size: contain !important;
+    border-radius: 0 !important;
+}
