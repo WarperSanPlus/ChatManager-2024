@@ -8,14 +8,11 @@
 @section Scripts {
     <script defer>
         initTimeout(120);
- let entries = new PartialRefresh("@Url.Action("GetEntries")", "EntriesListContainer", 5);
-
-        $(document).click(function () {
-            
+        let onRefresh = function () {
             $('.entry-delete').click(function () {
                 var date = $(this).data('date');
 
-               
+
                 bootbox.confirm({
                     message: "Êtes-vous sûr de vouloir supprimer cette entrée ?",
                     buttons: {
@@ -29,19 +26,21 @@
                         }
                     },
                     callback: function (result) {
-                       
+
                         if (result) {
                             $.ajax({
                                 type: 'POST',
                                 url: '/Entrer/SupprimerJour',
                                 data: { date: date },
-                              
+
                             });
                         }
                     }
                 });
             });
-        });
+        };
+
+        let entries = new PartialRefresh("@Url.Action("GetEntries")", "EntriesListContainer", 5, onRefresh);
     </script>
 }
 

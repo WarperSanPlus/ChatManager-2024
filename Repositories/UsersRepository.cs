@@ -40,6 +40,9 @@ namespace Repositories
                     this.RemoveResetPasswordCommands(userId);
                     _ = base.Delete(userId);
                     this.EndTransaction();
+
+                    EntrerRepository.Instance.UtilisateurEntrerSupprimer(userId);
+
                     return true;
                 }
             }

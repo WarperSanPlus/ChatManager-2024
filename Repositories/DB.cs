@@ -17,8 +17,8 @@ namespace Repositories
             
             [typeof(Entrer)] = new EntrerRepository(),
           
-            [typeof(UnverifiedEmail)] = new Repository<Gender>(),
-            [typeof(ResetPasswordCommand)] = new Repository<Gender>(),
+            [typeof(UnverifiedEmail)] = new Repository<UnverifiedEmail>(),
+            [typeof(ResetPasswordCommand)] = new Repository<ResetPasswordCommand>(),
         };
 
         #endregion Repositories

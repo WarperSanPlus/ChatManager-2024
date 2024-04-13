@@ -491,7 +491,7 @@ namespace Controllers
             User userToDelete = UsersRepository.Instance.Get(userid);
             if (userToDelete != null)
             {
-                this.SendDeletedAccountEMail(userToDelete);
+                // this.SendDeletedAccountEMail(userToDelete);
                 return this.Json(UsersRepository.Instance.Delete(userid), JsonRequestBehavior.AllowGet);
             }
             else

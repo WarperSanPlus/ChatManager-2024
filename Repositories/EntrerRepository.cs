@@ -84,14 +84,14 @@ namespace Repositories
                EndTransaction();
             }
         }
-        public void UtilisateurEntrerSupprimer(User user)
+        public void UtilisateurEntrerSupprimer(int userId)
         {
             try
             {
                BeginTransaction();
 
                
-                var entrersToDelete = Instance.ToList().Where(e => e.IdUser == user.Id).ToList();
+                var entrersToDelete = Instance.ToList().Where(e => e.IdUser == userId).ToList();
 
                
                 foreach (var entrer in entrersToDelete)

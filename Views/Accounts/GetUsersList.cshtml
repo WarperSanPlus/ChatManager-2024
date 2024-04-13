@@ -1,8 +1,17 @@
 ﻿@model IEnumerable<Models.User>
 
+@{
+    var local = Models.OnlineUsers.GetSessionUser();
+
+    if (local == null)
+    {
+        return;
+    }
+}
+
 @foreach (var item in Model)
 {
-    if (item.Id != Models.OnlineUsers.GetSessionUser().Id)
+    if (item.Id != local.Id)
     {
         var emailReference = "mailto:" + item.Email;
         bool isOnline = Models.OnlineUsers.IsOnLine(item.Id);

@@ -39,7 +39,7 @@ namespace Repositories
         private List<T> dataList;
 
         // retourne la valeur de l'attribut attributeName de l'intance data de classe T
-        private object GetAttributeValue(T data, string attributeName) => data.GetType().GetProperty(attributeName).GetValue(data, null);
+        private object GetAttributeValue(T data, string attributeName, object defaultValue) => data?.GetType().GetProperty(attributeName).GetValue(data, null) ?? defaultValue;
 
         // affecter la valeur de l'attribut attributeName de l'intance data de classe T
         private void SetAttributeValue(T data, string attributeName, object value) => data.GetType().GetProperty(attributeName).SetValue(data, value, null);
@@ -56,12 +56,17 @@ namespace Repositories
                 if (attribute == null)
                     continue;
 
-                var value = this.GetAttributeValue(data, property.Name).ToString();
+                var value = this.GetAttributeValue(data, property.Name, null);
 
-                var assetsFolder = ((ImageAssetAttribute)attribute).Folder();
-                var masterPath = HostingEnvironment.MapPath("~/" + assetsFolder);
+                if (value == null)
+                    continue;
+                
+                value = value.ToString();
 
-                File.Delete(masterPath + "/" + value);
+                // var assetsFolder = ((ImageAssetAttribute)attribute).Folder();
+                var masterPath = HostingEnvironment.MapPath("~/" + value);
+
+                File.Delete(masterPath);
             }
         }
 
@@ -128,7 +133,7 @@ namespace Repositories
         }
 
         // retourne la valeur de l'attribut Id d'une instance de classe T
-        private int Id(T data) => (int)this.GetAttributeValue(data, "Id");
+        private int Id(T data) => (int)this.GetAttributeValue(data, "Id", 0);
 
         // Mise à jour du fichier JSON avec les données présentes dans la cache dataList
         private void UpdateFile()
