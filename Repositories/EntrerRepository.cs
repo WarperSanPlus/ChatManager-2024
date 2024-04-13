@@ -58,5 +58,54 @@ namespace Repositories
             return latestEntrer;
         }
         public IEnumerable<Entrer> GetEntrers() => Instance.ToList().OrderByDescending(e => e.entrer);
+
+
+
+        public void SupprimerJour(DateTime date)
+        {
+            try
+            {
+               BeginTransaction();
+
+                
+                var entrersToDelete = Instance.ToList().Where(e => e.entrer.Date == date.Date).ToList();
+
+                
+                foreach (var entrer in entrersToDelete)
+                {
+                     Delete(entrer.Id);
+                }
+
+               EndTransaction();
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Delete les entrerr echouer - {ex.Message}");
+               EndTransaction();
+            }
+        }
+        public void UtilisateurEntrerSupprimer(User user)
+        {
+            try
+            {
+               BeginTransaction();
+
+               
+                var entrersToDelete = Instance.ToList().Where(e => e.IdUser == user.Id).ToList();
+
+               
+                foreach (var entrer in entrersToDelete)
+                {
+                    Delete(entrer.Id);
+                }
+
+                EndTransaction();
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Delete usager pas bien fait - {ex.Message}");
+                EndTransaction();
+            }
+        }
     }
 }

@@ -39,3 +39,23 @@
     }
     <hr />
 }
+
+
+    <script defer>
+        $(document).click(function() {
+           
+            $('.entry-delete').click(function () {
+                console.log('Clic sur l\'élément .entry-delete');
+                var date = $(this).data('date');
+
+            
+                $.ajax({
+                    type: 'POST',
+                    url: '/EntrerController/SupprimerJour',
+                    data: { date: date },
+                   
+                });
+            });
+        });
+
+   </script>
