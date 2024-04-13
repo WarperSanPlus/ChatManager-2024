@@ -8,19 +8,36 @@
 @section Scripts {
     <script defer>
         initTimeout(120);
-        let entries = new PartialRefresh("@Url.Action("GetEntries")", "EntriesListContainer", 5);
+ let entries = new PartialRefresh("@Url.Action("GetEntries")", "EntriesListContainer", 5);
 
         $(document).click(function () {
-
+            
             $('.entry-delete').click(function () {
                 var date = $(this).data('date');
 
-                $.ajax({
-                    type: 'POST',
-                    url: '/Entrer/SupprimerJour',
-                    data: { date: date },
-                    success: () => {
-                        entries.refresh(true);
+               
+                bootbox.confirm({
+                    message: "Êtes-vous sûr de vouloir supprimer cette entrée ?",
+                    buttons: {
+                        confirm: {
+                            label: 'Oui',
+                            className: 'btn-success'
+                        },
+                        cancel: {
+                            label: 'Non',
+                            className: 'btn-danger'
+                        }
+                    },
+                    callback: function (result) {
+                       
+                        if (result) {
+                            $.ajax({
+                                type: 'POST',
+                                url: '/Entrer/SupprimerJour',
+                                data: { date: date },
+                              
+                            });
+                        }
                     }
                 });
             });
@@ -29,5 +46,5 @@
 }
 
 @section Styles {
-    <link rel="stylesheet" href="~/Content/LoginJournalStyles.css"/>
+    <link rel="stylesheet" href="~/Content/LoginJournalStyles.css" />
 }
