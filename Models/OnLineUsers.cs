@@ -64,7 +64,11 @@ namespace Models
                 ConnectedUsersId.Remove(user.Id);
                 HttpContext.Current?.Session.Abandon();
                 Entrer NouvelEntrer = EntrerRepository.Instance.GetEntrer(user.Id);
-                NouvelEntrer.sortie = DateTime.Now;
+                if (NouvelEntrer != null)
+                {
+                    NouvelEntrer.sortie = DateTime.Now;
+                }
+             
                 EntrerRepository.Instance.Update(NouvelEntrer);
             }
             SetHasChanged();
