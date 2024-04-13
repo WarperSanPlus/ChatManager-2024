@@ -25,7 +25,7 @@ namespace Controllers
         //{
         //    return View();
         //}
-        public ActionResult DeconnextionImprevue()
+        public ActionResult DeconnexionImprevue()
         {
             User user = OnlineUsers.GetSessionUser();
             if (user != null)

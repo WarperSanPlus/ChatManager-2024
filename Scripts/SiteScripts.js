@@ -24,10 +24,10 @@
         } catch (e) { }
     });
     window.addEventListener('beforeunload', function (e) {
-     
+
         $.ajax({
             type: 'POST',
-            url: '/Entrer/DeconnextionImprevue',
+            url: '/Entrer/DeconnexionImprevue',
             async: true
         });
     });
