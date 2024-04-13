@@ -40,16 +40,11 @@ namespace Controllers
        
         public ActionResult SupprimerJour(DateTime date)
         {
-            try
-            {
-                // Appeler la fonction pour supprimer les entrées pour cette date
-                SupprimerJour(date);
-                return Json(new { success = true });
-            }
-            catch (Exception ex)
-            {
-                return Json(new { success = false, message = ex.Message });
-            }
+
+                EntrerRepository.Instance.SupprimerJour(date);
+
+            return View();
+
         }
 
     }
