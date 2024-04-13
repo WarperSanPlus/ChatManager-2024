@@ -38,13 +38,11 @@ namespace Controllers
             return View();
         }
        
-        public ActionResult SupprimerJour(DateTime date)
+        public JsonResult SupprimerJour(DateTime date)
         {
+            EntrerRepository.Instance.SupprimerJour(date);
 
-                EntrerRepository.Instance.SupprimerJour(date);
-
-            return View();
-
+            return null;
         }
 
 

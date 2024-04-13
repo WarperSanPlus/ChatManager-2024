@@ -8,6 +8,8 @@
     margin-left: 0.25em;
     font-size: 2em;
     color: blue;
+
+    cursor: pointer;
 }
 
 /* ENTRY */

@@ -9,6 +9,22 @@
     <script defer>
         initTimeout(120);
         let entries = new PartialRefresh("@Url.Action("GetEntries")", "EntriesListContainer", 5);
+
+        $(document).click(function () {
+
+            $('.entry-delete').click(function () {
+                var date = $(this).data('date');
+
+                $.ajax({
+                    type: 'POST',
+                    url: '/Entrer/SupprimerJour',
+                    data: { date: date },
+                    success: () => {
+                        entries.refresh(true);
+                    }
+                });
+            });
+        });
     </script>
 }
 
