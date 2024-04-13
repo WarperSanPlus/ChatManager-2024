@@ -51,9 +51,9 @@
             
                 $.ajax({
                     type: 'POST',
-                    url: '/EntrerController/SupprimerJour',
+                    url: '/Entrer/SupprimerJour',
                     data: { date: date },
-                   
+                    async: true
                 });
             });
         });

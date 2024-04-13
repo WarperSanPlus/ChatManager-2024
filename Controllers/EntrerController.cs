@@ -47,5 +47,15 @@ namespace Controllers
 
         }
 
+
+
+        public ActionResult SupprimerJoueur(User user)
+        {
+
+            EntrerRepository.Instance.UtilisateurEntrerSupprimer(user);
+
+            return View();
+
+        }
     }
 }
