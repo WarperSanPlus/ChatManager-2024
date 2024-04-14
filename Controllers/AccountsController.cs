@@ -294,7 +294,8 @@ namespace Controllers
                 if (UsersRepository.Instance.Update(user))
                 {
                     if (newEmail == "")
-                        return this.Redirect((string)this.Session["LastAction"]);
+                        return this.RedirectToAction(nameof(Profil));
+                        //return this.Redirect((string)this.Session["LastAction"]);
 
                     this.SendEmailChangedVerification(user, newEmail);
                     return this.RedirectToAction("EmailChangedAlert");

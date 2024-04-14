@@ -23,7 +23,8 @@
             $(this).val(r);
         } catch (e) { }
     });
-    window.addEventListener('beforeunload', function (e) {
+
+    $(window).on("unload", function (e) {
 
         $.ajax({
             type: 'POST',

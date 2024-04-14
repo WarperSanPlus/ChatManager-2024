@@ -6,7 +6,7 @@ namespace Controllers
 {
     public class EntrerController : Controller
     {
-        public ActionResult DeconnexionImprevue()
+        public JsonResult DeconnexionImprevue()
         {
             User user = OnlineUsers.GetSessionUser();
             if (user != null)
@@ -15,8 +15,8 @@ namespace Controllers
                 NouvelEntrer.sortie = NouvelEntrer.entrer;
                 EntrerRepository.Instance.Update(NouvelEntrer);
             }
-     
-            return View();
+
+            return null;
         }
        
         public JsonResult SupprimerJour(DateTime date)

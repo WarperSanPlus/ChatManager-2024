@@ -116,13 +116,13 @@ namespace Repositories
                 }
 
                 // Get path
-                var masterPath = HostingEnvironment.MapPath("~/" + asset.Folder());
+                var masterPath = HostingEnvironment.MapPath("~");
 
                 // Delete previous asset
                 if (prevData != null)
                     File.Delete(masterPath + "/" + property.GetValue(prevData));
 
-                var fileName = Guid.NewGuid().ToString() + "." + extension;
+                var fileName =  asset.Folder() + "/" + Guid.NewGuid().ToString() + "." + ".jpeg";
 
                 // Update path
                 property.SetValue(data, fileName, null);
