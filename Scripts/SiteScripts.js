@@ -23,16 +23,6 @@
             $(this).val(r);
         } catch (e) { }
     });
-
-    $(window).on("unload", function (e) {
-
-        $.ajax({
-            type: 'POST',
-            url: '/Entrer/DeconnexionImprevue',
-            async: true
-        });
-    });
-
 })
 
 function InstallAutoComplete(targetId, words) {
