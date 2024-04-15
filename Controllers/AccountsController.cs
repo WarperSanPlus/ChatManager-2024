@@ -143,7 +143,7 @@ namespace Controllers
 
         public ActionResult EmailChangedAlert()
         {
-            OnlineUsers.RemoveSessionUser();
+            OnlineUsers.RemoveSessionUser(true);
             return this.View();
         }
 
@@ -361,7 +361,7 @@ namespace Controllers
 
         public ActionResult Logout()
         {
-            OnlineUsers.RemoveSessionUser();
+            OnlineUsers.RemoveSessionUser(true);
             return this.RedirectToAction("Login");
         }
 

@@ -13,8 +13,7 @@ namespace ChatManager
                         "~/Scripts/partialRefresh.js",
                         "~/Scripts/bootbox.js",
                         "~/Scripts/NotificationsHandler.js",
-                        "~/Scripts/session.js",
-                        "~/Scripts/unexpectedDeconnection.js"));
+                        "~/Scripts/session.js"));
 
             bundles.Add(new ScriptBundle("~/bundles/jqueryval").Include(
                        "~/Scripts/jquery.validate*",

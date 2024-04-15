@@ -113,7 +113,6 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Labels.resx</DependentUpon>
     </Compile>
-    <Content Include="Scripts\unexpectedDeconnection.js" />
     <Content Include="App_Code\CustomHelper.cs" />
     <Compile Include="App_Start\BundleConfig.cs" />
     <Compile Include="App_Start\FilterConfig.cs" />

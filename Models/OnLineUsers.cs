@@ -50,27 +50,30 @@ namespace Models
         {
             HttpContext.Current.Session["UserId"] = userId;
             ConnectedUsersId.Add(userId);
-            Entrer enter = new Entrer();
-            enter.IdUser = userId;
-            EntrerRepository.Instance.Create(enter);
-       
+            var enter = new Entrer
+            {
+                IdUser = userId
+            };
+            _ = EntrerRepository.Instance.Create(enter);
+
             SetHasChanged();
         }
-        public static void RemoveSessionUser()
+        public static void RemoveSessionUser(bool isLegit = false)
         {
-            User user = GetSessionUser();
+            var user = GetSessionUser();
             if (user != null)
             {
-                ConnectedUsersId.Remove(user.Id);
+                _ = ConnectedUsersId.Remove(user.Id);
                 HttpContext.Current?.Session.Abandon();
-                Entrer NouvelEntrer = EntrerRepository.Instance.GetEntrer(user.Id);
+
+                var NouvelEntrer = EntrerRepository.Instance.GetEntrer(user.Id);
                 if (NouvelEntrer != null)
                 {
-                    NouvelEntrer.sortie = DateTime.Now;
+                    NouvelEntrer.sortie = isLegit ? DateTime.Now : NouvelEntrer.entrer;
+                    _ = EntrerRepository.Instance.Update(NouvelEntrer);
                 }
-             
-                EntrerRepository.Instance.Update(NouvelEntrer);
             }
+
             SetHasChanged();
         }
         public static bool IsOnLine(int userId) => ConnectedUsersId.Contains(userId);
@@ -82,7 +85,7 @@ namespace Models
         }
         public static bool Write_Access()
         {
-            User sessionUser = OnlineUsers.GetSessionUser();
+            var sessionUser = OnlineUsers.GetSessionUser();
             return sessionUser != null && (sessionUser.IsPowerUser || sessionUser.IsAdmin);
         }
         #endregion
@@ -98,7 +101,7 @@ namespace Models
         }
         public static void AddNotification(int TargetUserId, string Message)
         {
-            User user = UsersRepository.GetUser(TargetUserId);
+            var user = UsersRepository.GetUser(TargetUserId);
 
             if (user == null || !IsOnLine(user.Id))
                 return;
@@ -109,7 +112,7 @@ namespace Models
         {
             var notificationMessages = new List<string>();
             var notifications = Notifications.Where(n => n.TargetUserId == TargetUserId).OrderBy(n => n.Created).ToList();
-            foreach (Notification notification in notifications)
+            foreach (var notification in notifications)
             {
                 if (IsOnLine(notification.TargetUserId))
                     notificationMessages.Add(notification.Message);
@@ -126,12 +129,12 @@ namespace Models
             public UserAccess(bool serverSideResponseHandling = true) => this.ServerSideResponseHandling = serverSideResponseHandling;
             protected override bool AuthorizeCore(HttpContextBase httpContext)
             {
-                User sessionUser = OnlineUsers.GetSessionUser();
+                var sessionUser = OnlineUsers.GetSessionUser();
                 if (sessionUser != null)
                 {
                     if (sessionUser.Blocked)
                     {
-                        RemoveSessionUser();
+                        RemoveSessionUser(true);
                         if (this.ServerSideResponseHandling)
                         {
                             httpContext.Response.Redirect("~/Accounts/Login?message=Compte bloqué!");
@@ -155,7 +158,7 @@ namespace Models
         {
             protected override bool AuthorizeCore(HttpContextBase httpContext)
             {
-                User sessionUser = OnlineUsers.GetSessionUser();
+                var sessionUser = OnlineUsers.GetSessionUser();
                 if (sessionUser != null && (sessionUser.IsPowerUser || sessionUser.IsAdmin))
                 {
                     return true;
@@ -172,7 +175,7 @@ namespace Models
         {
             protected override bool AuthorizeCore(HttpContextBase httpContext)
             {
-                User sessionUser = OnlineUsers.GetSessionUser();
+                var sessionUser = OnlineUsers.GetSessionUser();
                 if (sessionUser != null && sessionUser.IsAdmin)
                 {
                     return true;
