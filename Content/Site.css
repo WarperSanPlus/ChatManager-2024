@@ -9,8 +9,8 @@
     padding-right: 15px;
 }
 
-/* Override the default bootstrap behavior where horizontal description lists 
-   will truncate terms that are too long to fit in the left column 
+/* Override the default bootstrap behavior where horizontal description lists
+   will truncate terms that are too long to fit in the left column
 */
 .dl-horizontal dt {
     white-space: normal;
@@ -107,7 +107,6 @@ body {
         -webkit-text-stroke-color: #6dbafc;
         -webkit-text-fill-color: #6dbafc;
     }
-
 
     .icon:active {
         -webkit-text-stroke-color: #e0f1ff;
@@ -296,7 +295,6 @@ div1, img1 {
     border: 1px solid red;
 }
 
-
 .menu-Icon {
     font-size: 30px !important;
     -webkit-text-stroke-width: 0 !important;
@@ -311,11 +309,9 @@ div1, img1 {
         -webkit-text-fill-color: #e0f1ff !important;
     }
 
-
 input[type=checkbox] {
     width: 16px !important;
 }
-
 
 .userItem {
     display: flex;

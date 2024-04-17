@@ -1,15 +1,15 @@
 function createTimeoutPopup() {
     $('body').append(`
-        <div class='popup'> 
+        <div class='popup'>
             <div class='popupContent'>
                 <div>
-                    <div class='popupHearder'> Attention!</div> 
+                    <div class='popupHearder'> Attention!</div>
                     <h4 id='popUpMessage'></h4>
                 </div>
-                <div onclick='closePopup(); ' class='close-btn fa fa-close'></div> 
+                <div onclick='closePopup(); ' class='close-btn fa fa-close'></div>
             </div>
-           
-        </div> 
+
+        </div>
     `);
 }
 let currentTimeouID = undefined;

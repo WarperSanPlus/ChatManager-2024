@@ -18,20 +18,22 @@ namespace Models
     public sealed class Countries
     {
         #region private members and methods
+
         public static Countries Instance { get; } = new Countries();
         private static readonly string Iso3166File = @"~/App_Data/iso-3166.txt";
         private static readonly List<Country> _countries = new List<Country>();
+
         private static void LoadCountries()
         {
             var httpServerUtility = new HttpServerUtilityWrapper(HttpContext.Current.Server);
             var iso3166Path = httpServerUtility.MapPath(Iso3166File);
             try
             {
-                // Create a StreamReader  
+                // Create a StreamReader
                 using (var reader = new StreamReader(iso3166Path))
                 {
                     string line;
-                    // Read line by line  
+                    // Read line by line
                     while ((line = reader.ReadLine()) != null)
                     {
                         var token = line.Split(new char[] { ',' });
@@ -43,9 +45,11 @@ namespace Models
             {
             }
         }
-        #endregion
+
+        #endregion private members and methods
 
         #region public method
+
         public static List<Country> List
         {
             get
@@ -55,11 +59,13 @@ namespace Models
                 return _countries.OrderBy(c => c.Name).ToList();
             }
         }
+
         public static Country Get(string code)
         {
             Country country = List.FirstOrDefault(c => c.Code == code);
             return country;
         }
+
         public static string FlagUrl(string code)
         {
             var url = string.Empty;
@@ -68,6 +74,7 @@ namespace Models
                 url = country.Flag;
             return url;
         }
-        #endregion
+
+        #endregion public method
     }
 }

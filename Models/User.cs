@@ -17,6 +17,7 @@ namespace Models
         public User Clone() => JsonConvert.DeserializeObject<User>(JsonConvert.SerializeObject(this));
 
         #region Data Members
+
         public int Id { get; set; } = 0;
         public int UserTypeId { get; set; } = 3;
         public bool Verified { get; set; } = false;
@@ -58,18 +59,20 @@ namespace Models
         [Display(Name = "Date de création")]
         [DataType(DataType.Date)]
         public DateTime CreationDate { get; set; } = DateTime.Now;
-        #endregion
+
+        #endregion Data Members
+
         #region View members
 
         [JsonIgnore]
         public Gender Gender => DB.GetRepo<Gender>().Get(this.GenderId);
-        
+
         [JsonIgnore]
         public UserType UserType => DB.GetRepo<UserType>().Get(this.UserTypeId);
 
         [JsonIgnore]
         public bool IsPowerUser => this.UserTypeId <= 2 /* Admin = 1 , PowerUser = 2 */;
-        
+
         [JsonIgnore]
         public bool IsAdmin => this.UserTypeId == 1 /* Admin */;
 
@@ -83,6 +86,7 @@ namespace Models
 
             return this.FirstName + " " + this.LastName;
         }
-        #endregion
+
+        #endregion View members
     }
 }

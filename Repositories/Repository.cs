@@ -60,7 +60,7 @@ namespace Repositories
 
                 if (value == null)
                     continue;
-                
+
                 value = value.ToString();
 
                 // var assetsFolder = ((ImageAssetAttribute)attribute).Folder();
@@ -122,7 +122,7 @@ namespace Repositories
                 if (prevData != null)
                     File.Delete(masterPath + "/" + property.GetValue(prevData));
 
-                var fileName =  asset.Folder() + "/" + Guid.NewGuid().ToString() + "." + ".jpeg";
+                var fileName = asset.Folder() + "/" + Guid.NewGuid().ToString() + "." + ".jpeg";
 
                 // Update path
                 property.SetValue(data, fileName, null);

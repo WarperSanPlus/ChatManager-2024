@@ -3,7 +3,6 @@ using Models;
 using Repositories;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Web.Mvc;
 
@@ -295,7 +294,7 @@ namespace Controllers
                 {
                     if (newEmail == "")
                         return this.RedirectToAction(nameof(Profil));
-                        //return this.Redirect((string)this.Session["LastAction"]);
+                    //return this.Redirect((string)this.Session["LastAction"]);
 
                     this.SendEmailChangedVerification(user, newEmail);
                     return this.RedirectToAction("EmailChangedAlert");
@@ -368,7 +367,7 @@ namespace Controllers
         [OnlineUsers.AdminAccess]
         public ActionResult LoginsJournal()
         {
-             // this.ViewBag.Entries = EntrerRepository.GetEntrers();
+            // this.ViewBag.Entries = EntrerRepository.GetEntrers();
 
             return this.View();
         }

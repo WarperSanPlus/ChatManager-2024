@@ -17,26 +17,30 @@ namespace Attributes
         }
 
         public string Folder() => this.folder;
+
         public string DefaultValue() => this.defaultValue;
     }
 
     public class ImageAsset<T>
     {
         private object GetAttributeValue(T data, string attributeName) => data.GetType().GetProperty(attributeName).GetValue(data, null);
+
         // affecter la valeur de l'attribut attributeName de l'intance data de classe T
         private void SetAttributeValue(T data, string attributeName, object value) => data.GetType().GetProperty(attributeName).SetValue(data, value, null);
+
         private bool IsBase64Value(string value)
         {
             var isBase64 = value.Contains("data:") && value.Contains(";base64,");
             return isBase64;
         }
+
         public void Delete(T data)
         {
-            Type type = data.GetType();
+            var type = data.GetType();
 
-            foreach (PropertyInfo property in type.GetProperties())
+            foreach (var property in type.GetProperties())
             {
-                Attribute attribute = property.GetCustomAttribute(typeof(ImageAssetAttribute));
+                var attribute = property.GetCustomAttribute(typeof(ImageAssetAttribute));
 
                 if (attribute != null)
                 {
@@ -49,10 +53,11 @@ namespace Attributes
                 }
             }
         }
+
         public void Update(T data)
         {
-            Type type = data.GetType();
-            foreach (PropertyInfo property in type.GetProperties())
+            var type = data.GetType();
+            foreach (var property in type.GetProperties())
             {
                 var assetAttribute = (ImageAssetAttribute)property.GetCustomAttribute(typeof(ImageAssetAttribute), true);
 
@@ -83,7 +88,7 @@ namespace Attributes
                             var key = Guid.NewGuid().ToString();
                             assetUrl = assetsFolder + key + "." + extension;
                             newAssetServerPath = HostingEnvironment.MapPath(assetUrl);
-                            // make sure new file does not already exists 
+                            // make sure new file does not already exists
                         } while (File.Exists(newAssetServerPath));
                         this.SetAttributeValue(data, propName, assetUrl);
                         using (var stream = new MemoryStream(Convert.FromBase64String(assetData)))

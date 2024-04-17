@@ -18,9 +18,11 @@ namespace Models
                 return (List<int>)HttpRuntime.Cache["OnLineUsers"];
             }
         }
+
         public static List<(int, int)> SessionEnCour = new List<(int, int)>();
 
         #region Status change management
+
         private static string SerialNumber
         {
             get
@@ -31,6 +33,7 @@ namespace Models
             }
             set => HttpRuntime.Cache["OnLineUsersSerialNumber"] = value;
         }
+
         public static bool HasChanged()
         {
             if (HttpContext.Current.Session["SerialNumber"] == null)
@@ -43,9 +46,13 @@ namespace Models
             HttpContext.Current.Session["SerialNumber"] = SerialNumber;
             return SerialNumber != sessionSerialNumber;
         }
+
         public static void SetHasChanged() => SerialNumber = Guid.NewGuid().ToString();
-        #endregion
+
+        #endregion Status change management
+
         #region Session management
+
         public static void AddSessionUser(int userId)
         {
             HttpContext.Current.Session["UserId"] = userId;
@@ -58,6 +65,7 @@ namespace Models
 
             SetHasChanged();
         }
+
         public static void RemoveSessionUser(bool isLegit = false)
         {
             var user = GetSessionUser();
@@ -76,20 +84,26 @@ namespace Models
 
             SetHasChanged();
         }
+
         public static bool IsOnLine(int userId) => ConnectedUsersId.Contains(userId);
+
         public static User GetSessionUser()
         {
             var id = HttpContext.Current.Session["UserId"];
 
             return id == null ? null : UsersRepository.GetUser((int)id);
         }
+
         public static bool Write_Access()
         {
             var sessionUser = OnlineUsers.GetSessionUser();
             return sessionUser != null && (sessionUser.IsPowerUser || sessionUser.IsAdmin);
         }
-        #endregion
+
+        #endregion Session management
+
         #region Notifications handling
+
         private static List<Notification> Notifications
         {
             get
@@ -99,6 +113,7 @@ namespace Models
                 return (List<Notification>)HttpRuntime.Cache["Notifications"];
             }
         }
+
         public static void AddNotification(int TargetUserId, string Message)
         {
             var user = UsersRepository.GetUser(TargetUserId);
@@ -108,6 +123,7 @@ namespace Models
 
             Notifications.Add(new Notification() { TargetUserId = TargetUserId, Message = Message });
         }
+
         public static List<string> PopNotifications(int TargetUserId)
         {
             var notificationMessages = new List<string>();
@@ -121,12 +137,17 @@ namespace Models
 
             return notificationMessages;
         }
-        #endregion
+
+        #endregion Notifications handling
+
         #region Access control
+
         public class UserAccess : AuthorizeAttribute
         {
             private bool ServerSideResponseHandling { get; set; }
+
             public UserAccess(bool serverSideResponseHandling = true) => this.ServerSideResponseHandling = serverSideResponseHandling;
+
             protected override bool AuthorizeCore(HttpContextBase httpContext)
             {
                 var sessionUser = OnlineUsers.GetSessionUser();
@@ -151,9 +172,9 @@ namespace Models
 
                 httpContext.Response.Redirect("~/Accounts/Login?message=Accès non autorisé!");
                 return false;
-
             }
         }
+
         public class PowerUserAccess : AuthorizeAttribute
         {
             protected override bool AuthorizeCore(HttpContextBase httpContext)
@@ -171,6 +192,7 @@ namespace Models
                 return false;
             }
         }
+
         public class AdminAccess : AuthorizeAttribute
         {
             protected override bool AuthorizeCore(HttpContextBase httpContext)
@@ -188,6 +210,7 @@ namespace Models
                 return true;
             }
         }
-        #endregion
+
+        #endregion Access control
     }
 }

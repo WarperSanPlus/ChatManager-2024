@@ -14,9 +14,9 @@ namespace Repositories
             [typeof(User)] = new UsersRepository(),
             [typeof(UserType)] = new Repository<UserType>(),
             [typeof(Gender)] = new Repository<Gender>(),
-            
+
             [typeof(Entrer)] = new EntrerRepository(),
-          
+
             [typeof(UnverifiedEmail)] = new Repository<UnverifiedEmail>(),
             [typeof(ResetPasswordCommand)] = new Repository<ResetPasswordCommand>(),
         };

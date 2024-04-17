@@ -5,7 +5,6 @@ namespace Models
 {
     public class Entrer
     {
-
         public int Id { get; set; } = 0;
         public int IdUser { get; set; } = 0;
         public DateTime entrer { get; set; } = DateTime.Now;
@@ -15,7 +14,7 @@ namespace Models
         public User User { get; set; }
 
         /// <returns>Is this entry still active?</returns>
-        public bool IsFinised() => this.sortie != null;
+        public bool IsFinised() => this.sortie != null;
 
         public bool IsValid() => this.entrer != this.sortie;
     }

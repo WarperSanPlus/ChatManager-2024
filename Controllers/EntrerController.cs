@@ -1,7 +1,7 @@
-﻿using Models;
-using Repositories;
+﻿using Repositories;
 using System;
 using System.Web.Mvc;
+
 namespace Controllers
 {
     public class EntrerController : Controller

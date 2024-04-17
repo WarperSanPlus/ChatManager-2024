@@ -3,39 +3,39 @@
 @* EVERY DAY *@
 @foreach (var day in Model)
 {
-    <div class="entry-day">
-        <span>@day.Key.ToString("yyyy-MM-dd")</span>
-        <i class="entry-delete fa fa-regular fa-rectangle-xmark" data-date="@day.Key"></i>
-    </div>
-    <hr />
-    @* EVERY ENTRY *@
+<div class="entry-day">
+    <span>@day.Key.ToString("yyyy-MM-dd")</span>
+    <i class="entry-delete fa fa-regular fa-rectangle-xmark" data-date="@day.Key"></i>
+</div>
+<hr />
+@* EVERY ENTRY *@
     foreach (Models.Entrer entry in day.ToArray())
     {
-        <div class="entry">
-            <div class="entry-user">
-                @Helper.AvatarUser(entry.User, "UserSmallAvatar")
-            </div>
-            <div class="entry-date">
-                <span class="date-field">@entry.entrer.ToString("HH:mm")</span>
-                <span class="date-separator"> : </span>
-                <span class="date-field">
-                    @{
+<div class="entry">
+    <div class="entry-user">
+        @Helper.AvatarUser(entry.User, "UserSmallAvatar")
+    </div>
+    <div class="entry-date">
+        <span class="date-field">@entry.entrer.ToString("HH:mm")</span>
+        <span class="date-separator"> : </span>
+        <span class="date-field">
+            @{
                         if (entry.IsFinised() && entry.IsValid())
                         {
-                            @entry.sortie.Value.ToString("HH:mm")
+                @entry.sortie.Value.ToString("HH:mm")
                         }
                         else if (entry.IsValid())
                         {
-                            @Helper.Image("/Content/UI-Icons/OnLine.png", "UserSmallAvatar")
+                @Helper.Image("/Content/UI-Icons/OnLine.png", "UserSmallAvatar")
                         }
                         else
                         {
-                            @Helper.Image("/Content/UI-Icons/timeout.png", "UserSmallAvatar TimeOut")
+                @Helper.Image("/Content/UI-Icons/timeout.png", "UserSmallAvatar TimeOut")
                         }
-                    }
-                </span>
-            </div>
-        </div>
+            }
+        </span>
+    </div>
+</div>
     }
-    <hr />
+<hr />
 }

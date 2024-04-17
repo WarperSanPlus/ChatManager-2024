@@ -2,7 +2,6 @@
     ViewBag.Title = "UserList";
 }
 
-
 <div class="formLayout">
     <h2>Liste des usagers</h2>
     <hr />
@@ -13,7 +12,7 @@
 @section Scripts {
     @Scripts.Render("~/bundles/jqueryval")
 
-<script defer>
+    <script defer>
         initTimeout(120);
         //PartialRefresh.setEndSessionAction("@Url.Action("End","Session")");
         let GetUsersList = new PartialRefresh("@Url.Action("GetUsersList")", "UsersListContainer", 5, UpdateCheckboxChangeCallback);
@@ -39,5 +38,5 @@
                 }
             )
         }
-</script>
+    </script>
 }

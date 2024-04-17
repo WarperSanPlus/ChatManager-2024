@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Linq.Expressions;
-using System.Reflection;
-using System.Web;
 
 // Auteur: Nicolas Chourot
 namespace System.Web.Mvc
@@ -88,7 +85,6 @@ namespace System.Web.Mvc
                 label.InnerHtml += enumDisplayName;
                 div.InnerHtml += label;
 
-
                 HTMLRadioButtonGroup.InnerHtml += div;
             }
             return new MvcHtmlString(HTMLRadioButtonGroup.ToString());
@@ -134,7 +130,6 @@ namespace System.Web.Mvc
                 label.InnerHtml += radioButton;
                 label.InnerHtml += choice.Text;
                 div.InnerHtml += label;
-
 
                 HTMLRadioButtonGroup.InnerHtml += div;
             }

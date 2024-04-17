@@ -21,9 +21,9 @@
 //
 //  With the following:
 /*
-    <div    class='imageUploader' 
-            controlId='PhotoImageData' 
-            imageSrc='Default_image.png' 
+    <div    class='imageUploader'
+            controlId='PhotoImageData'
+            imageSrc='Default_image.png'
             title='Click to select an image'>
     </div>
 */
@@ -92,25 +92,25 @@ function initImageUploaders() {
         let imageData = $(this).attr('imageSrc');
         initialImageURL = imageData;
 
-        $(this).append(`<img 
-                         id="${controlId}_UploadedImage" 
-                         tabindex=0 
+        $(this).append(`<img
+                         id="${controlId}_UploadedImage"
+                         tabindex=0
                          class="UploadedImage"
                          style="width:100%"
                          src="${imageData}"
                          title="${title}";
                          waitingImage ="${waitingImage}">`);
 
-        $(this).append(`<input 
-                         id="${controlId}_ImageUploader" 
+        $(this).append(`<input
+                         id="${controlId}_ImageUploader"
                          type="file" style="visibility:hidden; height:0px; width:0px; border:none; margin:0px !important"
                          accept="${acceptedFileFormat}">`);
 
-        $(this).append(`<input 
-                        style="visibility:hidden;height:0px;" 
+        $(this).append(`<input
+                        style="visibility:hidden;height:0px;"
                         class="fileUploadedSizeRule"
-                        id="${controlId}" 
-                        name="${controlId}" 
+                        id="${controlId}"
+                        name="${controlId}"
                         waitingImage ="${waitingImage}"
                         value="${imageData}">`);
 
@@ -276,7 +276,6 @@ function preLoadImage(event) {
     UploadedImage.setAttribute("previousImage", UploadedImage.src);
     // is there a file selection
     if (ImageUploader.value.length > 0) {
-
         // set the waiting image
         if (waitingImage !== "") UploadedImage.src = waitingImage;
         /* take some delai before starting uploading process in order to let browser to update UploadedImage new source affectation */

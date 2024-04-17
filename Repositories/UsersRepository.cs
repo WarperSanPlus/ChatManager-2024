@@ -9,6 +9,7 @@ namespace Repositories
     public class UsersRepository : Repository<User>
     {
         public static UsersRepository Instance => (UsersRepository)DB.GetRepo<User>();
+
         public static User GetUser(int id) => Instance.Get(id);
 
         public User Create(User user)
@@ -77,7 +78,7 @@ namespace Repositories
         }
 
         /// <returns>
-        /// All the users sorted by <see cref="User.FirstName"/> 
+        /// All the users sorted by <see cref="User.FirstName"/>
         /// then by <see cref="User.LastName"/>
         /// </returns>
         public IEnumerable<User> SortedUsers() => this.ToList().OrderBy(u => u.FirstName).ThenBy(u => u.LastName);
@@ -120,6 +121,7 @@ namespace Repositories
 
             return false;
         }
+
         public bool ChangeEmail(string code)
         {
             UnverifiedEmail unverifiedEmail = this.FindUnverifiedEmail(code);
@@ -152,22 +154,27 @@ namespace Repositories
 
             return false;
         }
+
         public bool EmailAvailable(string email, int excludedId = 0)
         {
             User user = this.ToList().Where(u => u.Email.ToLower() == email.ToLower()).FirstOrDefault();
             return user == null || user.Id == excludedId || user.Email.ToLower() != email.ToLower();
         }
+
         public bool EmailExist(string email) => this.ToList().Any(u => u.Email.ToLower() == email.ToLower());
+
         public bool EmailBlocked(string email)
         {
             User user = this.ToList().Where(u => u.Email.ToLower() == email.ToLower()).FirstOrDefault();
             return user == null || user.Blocked;
         }
+
         public bool EmailVerified(string email)
         {
             User user = this.ToList().Where(u => u.Email.ToLower() == email.ToLower()).FirstOrDefault();
             return user != null && user.Verified;
         }
+
         public UnverifiedEmail Add_UnverifiedEmail(int userId, string email)
         {
             UnverifiedEmail unverifiedEmail = null;
@@ -187,7 +194,9 @@ namespace Repositories
 
             return unverifiedEmail;
         }
+
         public UnverifiedEmail FindUnverifiedEmail(string code) => DB.GetRepo<UnverifiedEmail>().ToList().Where(u => u.VerificationCode == code).FirstOrDefault();
+
         private void RemoveUnverifiedEmails(int userId)
         {
             Repository<UnverifiedEmail> repository = DB.GetRepo<UnverifiedEmail>();
@@ -196,6 +205,7 @@ namespace Repositories
             foreach (UnverifiedEmail UnverifiedEmail in UnverifiedEmails)
                 _ = repository.Delete(UnverifiedEmail.Id);
         }
+
         public ResetPasswordCommand Add_ResetPasswordCommand(string email)
         {
             try
@@ -222,7 +232,9 @@ namespace Repositories
                 return null;
             }
         }
+
         public ResetPasswordCommand Find_ResetPasswordCommand(string verificationCode) => DB.GetRepo<ResetPasswordCommand>().ToList().Where(r => r.VerificationCode == verificationCode).FirstOrDefault();
+
         private void RemoveResetPasswordCommands(int userId)
         {
             Repository<ResetPasswordCommand> repository = DB.GetRepo<ResetPasswordCommand>();
@@ -231,6 +243,7 @@ namespace Repositories
             foreach (ResetPasswordCommand ResetPasswordCommand in ResetPasswordCommands)
                 _ = repository.Delete(ResetPasswordCommand.Id);
         }
+
         public bool ResetPassword(int userId, string password)
         {
             User user = this.Get(userId);

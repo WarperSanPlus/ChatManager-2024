@@ -11,7 +11,6 @@
     @Scripts.Render("~/bundles/modernizr")
     @RenderSection("styles", required: false)
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
-
 </head>
 <body>
     <div class="navbar navbar-inverse navbar-fixed-top">
@@ -20,26 +19,26 @@
                 @Helper.ImageCmd("Home", "About", "/info-icon.png", "menuIcon", "A propos...")
                 @if (currentUser != null)
                 {
-                    @Helper.ImageCmd("ChatRoom", "Index", "/Content/UI-Icons/chatRoom.png", "menuIcon", "Salle de clavardage...")
-                    @Helper.ImageCmd("Friendships", "Index", "/Content/UI-Icons/friendships.png", "menuIcon", "Gestion des amitiés...")
+                @Helper.ImageCmd("ChatRoom", "Index", "/Content/UI-Icons/chatRoom.png", "menuIcon", "Salle de clavardage...")
+                @Helper.ImageCmd("Friendships", "Index", "/Content/UI-Icons/friendships.png", "menuIcon", "Gestion des amitiés...")
                     if (currentUser.IsAdmin)
                     {
-                        @Helper.IconCmd("Accounts", "UsersList", "menu-Icon fa fa-users", "Gestion des usagers...")
-                        @Helper.IconCmd("Accounts", "GroupEmail", "menu-Icon fa fa-envelope", "Envoi de courriel à un groupe d'usagers...")
-                        @Helper.IconCmd("Accounts", "LoginsJournal", "menu-Icon fa fa-calendar", "Journal des connexions...")
+                @Helper.IconCmd("Accounts", "UsersList", "menu-Icon fa fa-users", "Gestion des usagers...")
+                @Helper.IconCmd("Accounts", "GroupEmail", "menu-Icon fa fa-envelope", "Envoi de courriel à un groupe d'usagers...")
+                @Helper.IconCmd("Accounts", "LoginsJournal", "menu-Icon fa fa-calendar", "Journal des connexions...")
                     }
                 }
             </div>
             @if (currentUser != null)
             {
-                @Helper.avatarLink(currentUser.Avatar, "/Accounts/Profil")
+            @Helper.avatarLink(currentUser.Avatar, "/Accounts/Profil")
 
-                @Helper.IconCmd("Accounts", "Logout", "menu-Icon fa fa-sign-out", "Se déconnecter...")
+            @Helper.IconCmd("Accounts", "Logout", "menu-Icon fa fa-sign-out", "Se déconnecter...")
             }
             else
             {
-                <span>&nbsp;</span>
-                @Helper.IconCmd("Accounts", "Login", "menu-Icon fa fa-sign-in", "Se connecter...")
+            <span>&nbsp;</span>
+            @Helper.IconCmd("Accounts", "Login", "menu-Icon fa fa-sign-in", "Se connecter...")
             }
         </div>
     </div>
@@ -50,6 +49,5 @@
     @Scripts.Render("~/bundles/jquery")
     @Scripts.Render("~/bundles/bootstrap")
     @RenderSection("scripts", required: false)
-
 </body>
 </html>

@@ -48,6 +48,7 @@ namespace Repositories
                 return false;
             }
         }
+
         public Entrer GetEntrer(int IDUser)
         {
             var entrerList = Instance.ToList().Where(e => e.IdUser == IDUser);
@@ -57,43 +58,39 @@ namespace Repositories
 
             return latestEntrer;
         }
+
         public IEnumerable<Entrer> GetEntrers() => Instance.ToList().OrderByDescending(e => e.entrer);
-
-
 
         public void SupprimerJour(DateTime date)
         {
             try
             {
-               BeginTransaction();
+                BeginTransaction();
 
-                
                 var entrersToDelete = Instance.ToList().Where(e => e.entrer.Date == date.Date).ToList();
 
-                
                 foreach (var entrer in entrersToDelete)
                 {
-                     Delete(entrer.Id);
+                    Delete(entrer.Id);
                 }
 
-               EndTransaction();
+                EndTransaction();
             }
             catch (Exception ex)
             {
                 System.Diagnostics.Debug.WriteLine($"Delete les entrerr echouer - {ex.Message}");
-               EndTransaction();
+                EndTransaction();
             }
         }
+
         public void UtilisateurEntrerSupprimer(int userId)
         {
             try
             {
-               BeginTransaction();
+                BeginTransaction();
 
-               
                 var entrersToDelete = Instance.ToList().Where(e => e.IdUser == userId).ToList();
 
-               
                 foreach (var entrer in entrersToDelete)
                 {
                     Delete(entrer.Id);

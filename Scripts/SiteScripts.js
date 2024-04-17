@@ -26,7 +26,6 @@
 })
 
 function InstallAutoComplete(targetId, words) {
-
     function split(val) {
         return val.split(/ \s*/);
     }
@@ -72,6 +71,4 @@ function InstallAutoComplete(targetId, words) {
                 return false;
             }
         });
-   
 };
-

@@ -1,12 +1,10 @@
-﻿
-.selectionsGrid {
+﻿.selectionsGrid {
     display: flex;
     flex-flow: row;
     font-family: Courrier,monospace;
     font-size: smaller;
-
-    padding:0px;
-    justify-content:space-between;
+    padding: 0px;
+    justify-content: space-between;
 }
 
 .HorSelectionsCMD {
@@ -32,7 +30,7 @@
 .selectionsGrid select {
     flex: 1;
     min-width: 120px;
-    max-width:400px !important;
+    max-width: 400px !important;
 }
 
 @media screen and (max-width: 440px ) {

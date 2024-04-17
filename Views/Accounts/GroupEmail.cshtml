@@ -6,40 +6,39 @@
     <h2>Envoi de courriel</h2>
     @if (ViewBag.Status != "")
     {
-        <h4 style="color:blue">@ViewBag.Status</h4>
+    <h4 style="color:blue">@ViewBag.Status</h4>
     }
     <hr />
     @using (Html.BeginForm())
     {
-        @Html.AntiForgeryToken()
+    @Html.AntiForgeryToken()
 
-        <fieldset class="formField">
-            <div class="legend">Destinataires</div>
+    <fieldset class="formField">
+        <div class="legend">Destinataires</div>
 
-            <div style="margin-bottom:10px; display:grid; grid-template-columns:auto auto auto">
-                <button id="SelectAll">Tous</button>
-                <div></div>
-                <button id="DeSelectAll">Aucun</button>
-            </div>
-            <div style="overflow-y:scroll; overflow-x:hidden; border:1px solid #ccc; padding:10px; height:200px;">
-                @Helper.UsersCheckList((IEnumerable<Models.User>)ViewBag.Users, (List<int>)ViewBag.SelectedUsers, "SelectedUsers")
-            </div>
-            <div id="Error_SelectedUsers" style="display:none" class="text-danger">Veuillez faire une sélection</div>
-        </fieldset>
-
-        <fieldset>
-            <div class="legend">Courriel</div>
-            @Html.EditorFor(model => model.Subject, new { htmlAttributes = new { @class = "form-control", placeholder = @Html.DisplayNameFor(model => model.Subject) } })
-            @Html.ValidationMessageFor(model => model.Subject, "", new { @class = "text-danger" })
-            <br />
-            @Html.TextAreaFor(model => model.Message, 10, 350, new { @class = "form-control wideTexarea", placeholder = @Html.DisplayNameFor(model => model.Message) })
-            <span style="font-size:x-small; color:blue">Note: [Nom] sera remplacé par une désignation (par exemple: Monsieur) suivi du nom de famille du destinataire.</span>
-            @Html.ValidationMessageFor(model => model.Message, "", new { @class = "text-danger" })
-
-        </fieldset>
-        <div class="form-group">
-            <input type="submit" value="Envoyer" class="btn btn-default" />
+        <div style="margin-bottom:10px; display:grid; grid-template-columns:auto auto auto">
+            <button id="SelectAll">Tous</button>
+            <div></div>
+            <button id="DeSelectAll">Aucun</button>
         </div>
+        <div style="overflow-y:scroll; overflow-x:hidden; border:1px solid #ccc; padding:10px; height:200px;">
+            @Helper.UsersCheckList((IEnumerable<Models.User>)ViewBag.Users, (List<int>)ViewBag.SelectedUsers, "SelectedUsers")
+        </div>
+        <div id="Error_SelectedUsers" style="display:none" class="text-danger">Veuillez faire une sélection</div>
+    </fieldset>
+
+    <fieldset>
+        <div class="legend">Courriel</div>
+        @Html.EditorFor(model => model.Subject, new { htmlAttributes = new { @class = "form-control", placeholder = @Html.DisplayNameFor(model => model.Subject) } })
+        @Html.ValidationMessageFor(model => model.Subject, "", new { @class = "text-danger" })
+        <br />
+        @Html.TextAreaFor(model => model.Message, 10, 350, new { @class = "form-control wideTexarea", placeholder = @Html.DisplayNameFor(model => model.Message) })
+        <span style="font-size:x-small; color:blue">Note: [Nom] sera remplacé par une désignation (par exemple: Monsieur) suivi du nom de famille du destinataire.</span>
+        @Html.ValidationMessageFor(model => model.Message, "", new { @class = "text-danger" })
+    </fieldset>
+    <div class="form-group">
+        <input type="submit" value="Envoyer" class="btn btn-default" />
+    </div>
     }
 </div>
 

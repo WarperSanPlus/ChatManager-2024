@@ -4,7 +4,6 @@
 $(document).ready(initUI);
 
 function initUI() {
-
     sortAllSelect();
     deSelectAll($('body'));
 
