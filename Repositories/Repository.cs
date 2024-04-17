@@ -104,7 +104,7 @@ namespace Repositories
                 // Null value
                 else
                 {
-                    var path = HostingEnvironment.MapPath("~/" + asset.DefaultValue());
+                    var path = HostingEnvironment.MapPath("~/" + property.GetValue(prevData));
 
                     // Get bytes
                     bytes = File.Exists(path)
