@@ -109,6 +109,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Attributes\AssetAttribute.cs" />
+    <Compile Include="Models\BaseModel.cs" />
     <Compile Include="Resources\Labels.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -127,8 +128,8 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Models\Entrer.cs" />
-    <Compile Include="Repositories\EntrerRepository.cs" />
+    <Compile Include="Models\Entry.cs" />
+    <Compile Include="Repositories\EntryRepository.cs" />
     <Compile Include="Models\GroupEmail.cs" />
     <Compile Include="Models\Gender.cs" />
     <Compile Include="Attributes\ImageAsset.cs" />
@@ -204,7 +205,7 @@
     <Content Include="App_Data\Users.json" />
     <Content Include="Content\bootstrap.min.css.map" />
     <Content Include="Content\bootstrap.css.map" />
-    <Content Include="App_Data\Entrers.json" />
+    <Content Include="App_Data\Entrys.json" />
     <None Include="Properties\PublishProfiles\ChatManager20240417083514 - Web Deploy.pubxml" />
     <None Include="Properties\PublishProfiles\MDB2023 - Web Deploy.pubxml" />
     <None Include="Properties\PublishProfiles\MoviesRepository - Web Deploy.pubxml" />
@@ -265,7 +266,6 @@
     <Content Include="Views\ChatRoom\Index.cshtml" />
     <Content Include="Views\Accounts\LoginsJournal.cshtml" />
     <Content Include="Views\FriendShips\Index.cshtml" />
-    <Content Include="Views\Accounts\LoginEntry.cshtml" />
     <Content Include="Views\Accounts\GetEntries.cshtml" />
   </ItemGroup>
   <ItemGroup>

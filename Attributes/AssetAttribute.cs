@@ -2,12 +2,12 @@
 
 namespace Attributes
 {
-    public sealed class ImageAssetAttribute : Attribute
+    public class AssetAttribute : Attribute
     {
         private readonly string folder;
         private readonly string defaultValue;
 
-        public ImageAssetAttribute(string folder, string defaultValue)
+        public AssetAttribute(string folder, string defaultValue = "")
         {
             this.folder = folder;
             this.defaultValue = defaultValue;
@@ -15,6 +15,6 @@ namespace Attributes
 
         public string Folder() => this.folder;
 
-        public string DefaultValue() => this.defaultValue;
+        public string Default() => this.defaultValue;
     }
 }

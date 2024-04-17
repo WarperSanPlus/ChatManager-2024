@@ -1,6 +1,6 @@
 ﻿namespace Models
 {
-    public class UnverifiedEmail
+    public class UnverifiedEmail : BaseModel
     {
         public int Id { get; set; }
         public string Email { get; set; }

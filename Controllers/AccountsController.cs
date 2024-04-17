@@ -15,7 +15,7 @@ namespace Controllers
         [HttpPost]
         public JsonResult EmailAvailable(string email)
         {
-            User user = OnlineUsers.GetSessionUser();
+            var user = OnlineUsers.GetSessionUser();
             var excludedId = user?.Id ?? 0;
             return this.Json(UsersRepository.Instance.EmailAvailable(email, excludedId));
         }
@@ -37,7 +37,7 @@ namespace Controllers
             user.UserTypeId = 3; // self subscribed user
             if (this.ModelState.IsValid)
             {
-                if (user.Avatar == Models.User.DefaultImage)
+                if (user.Avatar == Models.User.Default_Avatar)
                 {
                     // required avatar image
                     this.ModelState.AddModelError("Avatar", "Veuillez choisir votre avatar");
@@ -63,7 +63,7 @@ namespace Controllers
 
         public ActionResult SubscribeDone(int id)
         {
-            User newlySubscribedUser = UsersRepository.Instance.Get(id);
+            var newlySubscribedUser = UsersRepository.Instance.Get(id);
             return newlySubscribedUser != null ? this.View(newlySubscribedUser) : (ActionResult)this.RedirectToAction("Login");
         }
 
@@ -75,7 +75,7 @@ namespace Controllers
         {
             if (user.Id != 0)
             {
-                UnverifiedEmail unverifiedEmail = UsersRepository.Instance.Add_UnverifiedEmail(user.Id, newEmail);
+                var unverifiedEmail = UsersRepository.Instance.Add_UnverifiedEmail(user.Id, newEmail);
                 if (unverifiedEmail != null)
                 {
                     var verificationUrl = this.Url.Action("VerifyUser", "Accounts", null, this.Request.Url.Scheme);
@@ -104,7 +104,7 @@ namespace Controllers
 
         public ActionResult VerifyDone(int id)
         {
-            User newlySubscribedUser = UsersRepository.Instance.Get(id);
+            var newlySubscribedUser = UsersRepository.Instance.Get(id);
             return newlySubscribedUser != null ? this.View(newlySubscribedUser) : (ActionResult)this.RedirectToAction("Login");
         }
 
@@ -114,10 +114,10 @@ namespace Controllers
 
         public ActionResult VerifyUser(string code)
         {
-            UnverifiedEmail UnverifiedEmail = UsersRepository.Instance.FindUnverifiedEmail(code);
+            var UnverifiedEmail = UsersRepository.Instance.FindUnverifiedEmail(code);
             if (UnverifiedEmail != null)
             {
-                User newlySubscribedUser = UsersRepository.Instance.Get(UnverifiedEmail.UserId);
+                var newlySubscribedUser = UsersRepository.Instance.Get(UnverifiedEmail.UserId);
 
                 if (newlySubscribedUser != null)
                 {
@@ -158,7 +158,7 @@ namespace Controllers
         {
             if (user.Id != 0)
             {
-                UnverifiedEmail unverifiedEmail = UsersRepository.Instance.Add_UnverifiedEmail(user.Id, newEmail);
+                var unverifiedEmail = UsersRepository.Instance.Add_UnverifiedEmail(user.Id, newEmail);
                 if (unverifiedEmail != null)
                 {
                     var verificationUrl = this.Url.Action("CommitEmailChange", "Accounts", null, this.Request.Url.Scheme);
@@ -199,10 +199,10 @@ namespace Controllers
 
         public void SendResetPasswordCommandEmail(string email)
         {
-            ResetPasswordCommand resetPasswordCommand = UsersRepository.Instance.Add_ResetPasswordCommand(email);
+            var resetPasswordCommand = UsersRepository.Instance.Add_ResetPasswordCommand(email);
             if (resetPasswordCommand != null)
             {
-                User user = UsersRepository.Instance.Get(resetPasswordCommand.UserId);
+                var user = UsersRepository.Instance.Get(resetPasswordCommand.UserId);
                 var verificationUrl = this.Url.Action("ResetPassword", "Accounts", null, this.Request.Url.Scheme);
                 var Link = @"<br/><a href='" + verificationUrl + "?code=" + resetPasswordCommand.VerificationCode + @"' > Réinitialisation de mot de passe...</a>";
 
@@ -222,7 +222,7 @@ namespace Controllers
 
         public ActionResult ResetPassword(string code)
         {
-            ResetPasswordCommand resetPasswordCommand = UsersRepository.Instance.Find_ResetPasswordCommand(code);
+            var resetPasswordCommand = UsersRepository.Instance.Find_ResetPasswordCommand(code);
             return resetPasswordCommand != null ? this.View(new PasswordView() { Code = code }) : (ActionResult)this.RedirectToAction("ResetPasswordError");
         }
 
@@ -232,7 +232,7 @@ namespace Controllers
         {
             if (this.ModelState.IsValid)
             {
-                ResetPasswordCommand resetPasswordCommand = UsersRepository.Instance.Find_ResetPasswordCommand(passwordView.Code);
+                var resetPasswordCommand = UsersRepository.Instance.Find_ResetPasswordCommand(passwordView.Code);
                 return resetPasswordCommand != null
                     ? UsersRepository.Instance.ResetPassword(resetPasswordCommand.UserId, passwordView.Password)
                         ? this.RedirectToAction("ResetPasswordSuccess")
@@ -256,7 +256,7 @@ namespace Controllers
         [OnlineUsers.UserAccess]
         public ActionResult Profil()
         {
-            User userToEdit = OnlineUsers.GetSessionUser().Clone();
+            var userToEdit = OnlineUsers.GetSessionUser().Clone();
 
             if (userToEdit == null)
                 return null;
@@ -271,7 +271,7 @@ namespace Controllers
         [ValidateAntiForgeryToken()]
         public ActionResult Profil(User user)
         {
-            User currentUser = OnlineUsers.GetSessionUser();
+            var currentUser = OnlineUsers.GetSessionUser();
             user.Id = currentUser.Id;
             user.Verified = currentUser.Verified;
             user.UserTypeId = currentUser.UserTypeId;
@@ -328,7 +328,7 @@ namespace Controllers
         {
             if (this.ModelState.IsValid)
             {
-                UsersRepository repo = UsersRepository.Instance;
+                var repo = UsersRepository.Instance;
 
                 if (repo.EmailBlocked(loginCredential.Email))
                 {
@@ -342,7 +342,7 @@ namespace Controllers
                     return this.View(loginCredential);
                 }
 
-                User user = repo.GetUser(loginCredential);
+                var user = repo.GetUser(loginCredential);
 
                 if (user == null)
                 {
@@ -365,27 +365,25 @@ namespace Controllers
         }
 
         [OnlineUsers.AdminAccess]
-        public ActionResult LoginsJournal()
-        {
+        public ActionResult LoginsJournal() =>
             // this.ViewBag.Entries = EntrerRepository.GetEntrers();
 
-            return this.View();
-        }
+            this.View();
 
         [OnlineUsers.AdminAccess]
         public ActionResult GetEntries(bool forceRefresh = false)
         {
-            EntrerRepository repo = EntrerRepository.Instance;
+            var repo = EntryRepository.Instance;
 
             if (!forceRefresh && !repo.HasChanged && !UsersRepository.Instance.HasChanged)
                 return null;
 
-            IEnumerable<Entrer> entries = repo.GetEntrers();
+            var entries = repo.GetEntrers();
 
-            foreach (Entrer item in entries)
+            foreach (var item in entries)
                 item.User = UsersRepository.GetUser(item.IdUser);
 
-            return this.PartialView(entries.GroupBy(e => e.entrer.Date));
+            return this.PartialView(entries.GroupBy(e => e.Start.Date));
         }
 
         #endregion Login and Logout
@@ -420,7 +418,7 @@ namespace Controllers
         [OnlineUsers.AdminAccess]
         public void SendBlockStatusEMail(User user)
         {
-            User currentAdmin = OnlineUsers.GetSessionUser();
+            var currentAdmin = OnlineUsers.GetSessionUser();
             if (user != null)
             {
                 if (user.Blocked)
@@ -449,7 +447,7 @@ namespace Controllers
         [OnlineUsers.AdminAccess]
         public JsonResult ChangeUserBlockedStatus(int userid, bool blocked)
         {
-            User user = UsersRepository.Instance.Get(userid);
+            var user = UsersRepository.Instance.Get(userid);
             user.Blocked = blocked;
             this.SendBlockStatusEMail(user);
             return this.Json(UsersRepository.Instance.Update(user), JsonRequestBehavior.AllowGet);
@@ -457,7 +455,7 @@ namespace Controllers
 
         public JsonResult PromoteUser(int userid)
         {
-            User user = UsersRepository.Instance.Get(userid);
+            var user = UsersRepository.Instance.Get(userid);
             if (user != null)
             {
                 user.UserTypeId--;
@@ -472,7 +470,7 @@ namespace Controllers
         [OnlineUsers.AdminAccess]
         public void SendDeletedAccountEMail(User user)
         {
-            User currentAdmin = OnlineUsers.GetSessionUser();
+            var currentAdmin = OnlineUsers.GetSessionUser();
             if (user != null)
             {
                 var Subject = "Movies Database - Compte bloqué...";
@@ -488,7 +486,7 @@ namespace Controllers
         [OnlineUsers.AdminAccess]
         public JsonResult Delete(int userid)
         {
-            User userToDelete = UsersRepository.Instance.Get(userid);
+            var userToDelete = UsersRepository.Instance.Get(userid);
             if (userToDelete != null)
             {
                 // this.SendDeletedAccountEMail(userToDelete);

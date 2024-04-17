@@ -1,6 +1,6 @@
 ﻿namespace Models
 {
-    public class UserType
+    public class UserType : BaseModel
     {
         public int Id { get; set; }
         public string Name { get; set; }

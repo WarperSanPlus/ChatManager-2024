@@ -57,11 +57,11 @@ namespace Models
         {
             HttpContext.Current.Session["UserId"] = userId;
             ConnectedUsersId.Add(userId);
-            var enter = new Entrer
+            var enter = new Entry
             {
                 IdUser = userId
             };
-            _ = EntrerRepository.Instance.Create(enter);
+            _ = EntryRepository.Instance.Create(enter);
 
             SetHasChanged();
         }
@@ -74,11 +74,11 @@ namespace Models
                 _ = ConnectedUsersId.Remove(user.Id);
                 HttpContext.Current?.Session.Abandon();
 
-                var NouvelEntrer = EntrerRepository.Instance.GetEntrer(user.Id);
+                var NouvelEntrer = EntryRepository.Instance.GetEntrer(user.Id);
                 if (NouvelEntrer != null)
                 {
-                    NouvelEntrer.sortie = isLegit ? DateTime.Now : NouvelEntrer.entrer;
-                    _ = EntrerRepository.Instance.Update(NouvelEntrer);
+                    NouvelEntrer.End = isLegit ? DateTime.Now : NouvelEntrer.Start;
+                    _ = EntryRepository.Instance.Update(NouvelEntrer);
                 }
             }
 

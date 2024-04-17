@@ -42,7 +42,7 @@ namespace Repositories
                     _ = base.Delete(userId);
                     this.EndTransaction();
 
-                    EntrerRepository.Instance.UtilisateurEntrerSupprimer(userId);
+                    EntryRepository.Instance.UtilisateurEntrerSupprimer(userId);
 
                     return true;
                 }

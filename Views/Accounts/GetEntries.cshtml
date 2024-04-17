@@ -1,4 +1,4 @@
-﻿@model IEnumerable<IGrouping<System.DateTime, Models.Entrer>>
+﻿@model IEnumerable<IGrouping<System.DateTime, Models.Entry>>
 
 @* EVERY DAY *@
 @foreach (var day in Model)
@@ -9,20 +9,20 @@
 </div>
 <hr />
 @* EVERY ENTRY *@
-    foreach (Models.Entrer entry in day.ToArray())
+    foreach (Models.Entry entry in day.ToArray())
     {
 <div class="entry">
     <div class="entry-user">
         @Helper.AvatarUser(entry.User, "UserSmallAvatar")
     </div>
     <div class="entry-date">
-        <span class="date-field">@entry.entrer.ToString("HH:mm")</span>
+        <span class="date-field">@entry.Start.ToString("HH:mm")</span>
         <span class="date-separator"> : </span>
         <span class="date-field">
             @{
                         if (entry.IsFinised() && entry.IsValid())
                         {
-                @entry.sortie.Value.ToString("HH:mm")
+                @entry.End.Value.ToString("HH:mm")
                         }
                         else if (entry.IsValid())
                         {

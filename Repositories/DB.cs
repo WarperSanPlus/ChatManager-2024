@@ -15,7 +15,7 @@ namespace Repositories
             [typeof(UserType)] = new Repository<UserType>(),
             [typeof(Gender)] = new Repository<Gender>(),
 
-            [typeof(Entrer)] = new EntrerRepository(),
+            [typeof(Entry)] = new EntryRepository(),
 
             [typeof(UnverifiedEmail)] = new Repository<UnverifiedEmail>(),
             [typeof(ResetPasswordCommand)] = new Repository<ResetPasswordCommand>(),
@@ -31,14 +31,14 @@ namespace Repositories
         {
             var serverPath = HostingEnvironment.MapPath(@"~/App_Data/");
 
-            foreach (KeyValuePair<Type, Repository> item in Tables)
+            foreach (var item in Tables)
                 item.Value.Init(serverPath + item.Key.Name + "s.json");
         }
 
         #endregion initialization
 
         // Get repo with T
-        public static Repository<T> GetRepo<T>() => Tables.TryGetValue(typeof(T), out Repository repository)
+        public static Repository<T> GetRepo<T>() where T : BaseModel => Tables.TryGetValue(typeof(T), out var repository)
             ? (Repository<T>)repository
             : throw new NullReferenceException($"No repository found for the type '{typeof(T).Name}'.");
     }

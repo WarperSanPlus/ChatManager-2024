@@ -1,4 +1,5 @@
 ﻿using Attributes;
+using Models;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -26,7 +27,7 @@ namespace Repositories
     // Author : Nicolas Chourot
     // date: Janvier 2024
     ///////////////////////////////////////////////////////////////
-    public class Repository<T> : Repository
+    public class Repository<T> : Repository where T : BaseModel
     {
         #region Private
 
@@ -49,10 +50,10 @@ namespace Repositories
 
         private void DeleteAssets(T data)
         {
-            Type type = data.GetType();
-            foreach (PropertyInfo property in type.GetProperties())
+            var type = data.GetType();
+            foreach (var property in type.GetProperties())
             {
-                Attribute attribute = property.GetCustomAttribute(typeof(ImageAssetAttribute));
+                var attribute = property.GetCustomAttribute(typeof(AssetAttribute));
                 if (attribute == null)
                     continue;
 
@@ -61,77 +62,58 @@ namespace Repositories
                 if (value == null)
                     continue;
 
-                value = value.ToString();
+                var assetsFolder = ((AssetAttribute)attribute).Folder();
+                var masterPath = HostingEnvironment.MapPath("~/" + assetsFolder);
 
-                // var assetsFolder = ((ImageAssetAttribute)attribute).Folder();
-                var masterPath = HostingEnvironment.MapPath("~/" + value);
-
-                File.Delete(masterPath);
+                File.Delete(masterPath + "/" + value);
             }
         }
 
         private void HandleAssetMembers(T data)
         {
             // Get previous item
-            T prevData = this.Get(this.Id(data));
+            var prevData = this.Get(this.Id(data));
 
-            Type type = data.GetType();
-            foreach (PropertyInfo property in type.GetProperties())
+            var type = data.GetType();
+            foreach (var property in type.GetProperties())
             {
-                Attribute attribute = property.GetCustomAttribute(typeof(ImageAssetAttribute));
+                var attribute = property.GetCustomAttribute(typeof(AssetAttribute));
 
-                // If not ImageAssetAttribute, skip
-                if (!(attribute is ImageAssetAttribute asset))
+                // If not AssetAttribute, skip
+                if (!(attribute is AssetAttribute asset))
                     continue;
-
-                byte[] bytes;
-                string extension;
 
                 var propertyValue = property.GetValue(data).ToString();
 
                 // If the given value is base64
-                if (propertyValue.Contains("base64"))
-                {
-                    // Remove beginning tag
-                    propertyValue = propertyValue.Replace("data:image/", "");
+                if (!propertyValue.Contains("base64"))
+                    continue;
 
-                    // Get bytes
-                    bytes = Convert.FromBase64String(propertyValue.Split(',')[1]);
+                // Remove beginning tag
+                propertyValue = propertyValue.Replace("data:image/", "");
 
-                    // Get extension
-                    extension = propertyValue.Split(';')[0];
-                }
-                // Null value
-                else
-                {
-                    var path = HostingEnvironment.MapPath("~/" + property.GetValue(prevData));
+                // Get bytes
+                var bytes = Convert.FromBase64String(propertyValue.Split(',')[1]);
 
-                    // Get bytes
-                    bytes = File.Exists(path)
-                        ? File.ReadAllBytes(path)
-                        : throw new ArgumentNullException($"No valid image was provided for the new item of type \'{type.Name}\'.");
-
-                    // Get extension
-                    extension = path.Split('.').Last();
-                }
+                // Get extension
+                var extension = "jpeg";//propertyValue.Split(';')[0];
 
                 // Get path
                 var masterPath = HostingEnvironment.MapPath("~");
 
                 // Delete previous asset
                 if (prevData != null)
-                    File.Delete(masterPath + "/" + property.GetValue(prevData));
+                    File.Delete(masterPath + property.GetValue(prevData));
 
-                var fileName = asset.Folder() + "/" + Guid.NewGuid().ToString() + "." + ".jpeg";
+                var fileName = Guid.NewGuid().ToString() + "." + extension;
 
                 // Update path
                 property.SetValue(data, fileName, null);
 
                 // Create image
-                File.WriteAllBytes(masterPath + "/" + fileName, bytes);
+                File.WriteAllBytes(masterPath + "/" + asset.Folder() + fileName, bytes);
             }
         }
-
         // retourne la valeur de l'attribut Id d'une instance de classe T
         private int Id(T data) => (int)this.GetAttributeValue(data, "Id", 0);
 
@@ -172,6 +154,9 @@ namespace Repositories
                 }
 
                 this.dataList = this.dataList ?? new List<T>();
+
+                foreach (var item in this.dataList)
+                    item.PostInit();
             }
             catch (Exception)
             {
@@ -218,7 +203,7 @@ namespace Repositories
                 _ = mutex.WaitOne();
             try
             {
-                T dataToUpdate = this.Get(this.Id(data));
+                var dataToUpdate = this.Get(this.Id(data));
                 if (dataToUpdate != null)
                 {
                     var index = this.dataList.IndexOf(dataToUpdate);
@@ -249,7 +234,7 @@ namespace Repositories
                 _ = mutex.WaitOne();
             try
             {
-                T dataToDelete = this.Get(Id);
+                var dataToDelete = this.Get(Id);
 
                 if (dataToDelete != null)
                 {
@@ -401,7 +386,7 @@ namespace Repositories
 
                 if (!File.Exists(this.FilePath))
                 {
-                    using (StreamWriter sw = File.CreateText(this.FilePath))
+                    using (var sw = File.CreateText(this.FilePath))
                     {
                         sw.Close();
                     }

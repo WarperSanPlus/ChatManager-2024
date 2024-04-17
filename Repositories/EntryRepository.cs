@@ -5,11 +5,11 @@ using System.Linq;
 
 namespace Repositories
 {
-    public class EntrerRepository : Repository<Entrer>
+    public class EntryRepository : Repository<Entry>
     {
-        public static EntrerRepository Instance => (EntrerRepository)DB.GetRepo<Entrer>();
+        public static EntryRepository Instance => (EntryRepository)DB.GetRepo<Entry>();
 
-        public Entrer Create(Entrer entrer)
+        public Entry Create(Entry entrer)
         {
             try
             {
@@ -29,7 +29,7 @@ namespace Repositories
         {
             try
             {
-                Entrer EntrerToDelete = this.Get(EntrerId);
+                var EntrerToDelete = this.Get(EntrerId);
                 if (EntrerToDelete != null)
                 {
                     this.BeginTransaction();
@@ -49,37 +49,37 @@ namespace Repositories
             }
         }
 
-        public Entrer GetEntrer(int IDUser)
+        public Entry GetEntrer(int IDUser)
         {
             var entrerList = Instance.ToList().Where(e => e.IdUser == IDUser);
 
             // Trier les entrées par ordre décroissant de dateTime d'entrée
-            var latestEntrer = entrerList.OrderByDescending(e => e.entrer).FirstOrDefault();
+            var latestEntrer = entrerList.OrderByDescending(e => e.Start).FirstOrDefault();
 
             return latestEntrer;
         }
 
-        public IEnumerable<Entrer> GetEntrers() => Instance.ToList().OrderByDescending(e => e.entrer);
+        public IEnumerable<Entry> GetEntrers() => Instance.ToList().OrderByDescending(e => e.Start);
 
         public void SupprimerJour(DateTime date)
         {
             try
             {
-                BeginTransaction();
+                this.BeginTransaction();
 
-                var entrersToDelete = Instance.ToList().Where(e => e.entrer.Date == date.Date).ToList();
+                var entrersToDelete = Instance.ToList().Where(e => e.Start.Date == date.Date).ToList();
 
                 foreach (var entrer in entrersToDelete)
                 {
-                    Delete(entrer.Id);
+                    _ = this.Delete(entrer.Id);
                 }
 
-                EndTransaction();
+                this.EndTransaction();
             }
             catch (Exception ex)
             {
                 System.Diagnostics.Debug.WriteLine($"Delete les entrerr echouer - {ex.Message}");
-                EndTransaction();
+                this.EndTransaction();
             }
         }
 
@@ -87,21 +87,21 @@ namespace Repositories
         {
             try
             {
-                BeginTransaction();
+                this.BeginTransaction();
 
                 var entrersToDelete = Instance.ToList().Where(e => e.IdUser == userId).ToList();
 
                 foreach (var entrer in entrersToDelete)
                 {
-                    Delete(entrer.Id);
+                    _ = this.Delete(entrer.Id);
                 }
 
-                EndTransaction();
+                this.EndTransaction();
             }
             catch (Exception ex)
             {
                 System.Diagnostics.Debug.WriteLine($"Delete usager pas bien fait - {ex.Message}");
-                EndTransaction();
+                this.EndTransaction();
             }
         }
     }

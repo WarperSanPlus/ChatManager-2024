@@ -8,7 +8,7 @@ namespace Controllers
     {
         public JsonResult SupprimerJour(DateTime date)
         {
-            EntrerRepository.Instance.SupprimerJour(date);
+            EntryRepository.Instance.SupprimerJour(date);
 
             return null;
         }

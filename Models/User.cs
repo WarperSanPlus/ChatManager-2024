@@ -6,15 +6,19 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Models
 {
-    public class User
+    public class User : BaseModel
     {
         public const string User_Avatars_Folder = @"/Images_Data/User_Avatars/";
         public const string Default_Avatar = @"no_avatar.png";
 
-        [JsonIgnore]
-        public static string DefaultImage => User_Avatars_Folder + Default_Avatar;
-
         public User Clone() => JsonConvert.DeserializeObject<User>(JsonConvert.SerializeObject(this));
+
+        #region BaseModel
+
+        /// <inheritdoc/>
+        public override void PostInit() => this.Avatar = User_Avatars_Folder + this.Avatar;
+
+        #endregion
 
         #region Data Members
 
@@ -37,8 +41,8 @@ namespace Models
         public string Email { get; set; }
 
         [Display(Name = "Avatar")]
-        [ImageAsset(User_Avatars_Folder, Default_Avatar)]
-        public string Avatar { get; set; } = DefaultImage;
+        [Asset(User_Avatars_Folder, Default_Avatar)]
+        public string Avatar { get; set; } = Default_Avatar;
 
         [Display(Name = "Mot de passe"), Required(ErrorMessage = "Obligatoire")]
         [StringLength(50, ErrorMessage = "Le mot de passe doit comporter au moins {2} caractères.", MinimumLength = 6)]
