@@ -1,0 +1,58 @@
+﻿@model IEnumerable<Models.RelationShip>
+
+@foreach (var relation in Model)
+{
+    var state = relation.State;
+    var target = relation.GetOther();
+    var fromUser = relation.FromSessionUser();
+
+    var name = target.GetFullName();
+
+    <div class="relation-parent" data-id="@target.Id">
+        <div class="relation-user">
+            @Helper.AvatarUser(target, "UserSmallAvatar")
+        </div>
+        <div class="relation-status">
+            @Helper.OnLineStatusIcon(target.IsOnline(), target.Blocked)
+            
+            @if (target.Blocked)
+            {
+                <i class="fa-solid fa-fw fa-ban blocked" title="@name a été bloqué par un administrateur"></i>
+            }
+            else if (state == Models.RelationShipState.None)
+            {
+                <i class="fa-solid fa-fw fa-plus-circle canSend" title="Vous pouvez envoyé une demande d'amitié à @name"></i>
+            }
+            else if (state == Models.RelationShipState.Pending)
+            {
+                if (fromUser)
+                {
+                    <i class="fa-solid fa-fw fa-hourglass-start pending" title="Vous avez envoyé une demande d'amitié à @name"></i>
+                    <i class="fa-solid fa-fw fa-times cancel-pending" title="Retirer la demande d'amitié pour @name"></i>
+                }
+                else
+                {
+                    <i class="fa-solid fa-fw fa-check accept-pending" title="Accepter la demande d'amitié de @name"></i>
+                    <i class="fa-solid fa-fw fa-times deny-pending" title="Refuser la demande d'amitié de @name"></i>
+                }
+            }
+            else if (state == Models.RelationShipState.Accepted)
+            {
+                <i class="fa-solid fa-fw fa-circle-check accepted" title="Vous êtes amis avec @name"></i>
+            }
+            else if (state == Models.RelationShipState.Denied)
+            {
+
+                if (fromUser)
+                {
+                    <i class="fa-solid fa-fw fa-times-circle denied" title="Vous avez décliné la demande d'amitié de @name"></i>
+                    <i class="fa-solid fa-fw fa-plus-circle canSend" title="Vous pouvez envoyé une demande d'amitié à @name"></i>
+                }
+                else
+                {
+                    <i class="fa fa-fw fa-times-circle denied" title="@name a décliné votre demande d'amitié"></i>
+                }
+            }
+        </div>
+    </div>
+}

@@ -39,23 +39,10 @@
     "CreationDate": "2023-03-18T12:00:00"
   },
   {
-    "Id": 8,
-    "UserTypeId": 3,
-    "Verified": true,
-    "Blocked": false,
-    "FirstName": "Stéphane",
-    "LastName": "Chassé",
-    "GenderId": 2,
-    "Email": "Stephane.Chasse@clg.qc.ca",
-    "Avatar": "/Images_Data/User_Avatars/89ca9b58-9e3d-4c21-bb08-369f8f04b2fb.Jpeg",
-    "Password": "password",
-    "CreationDate": "2023-03-18T12:00:00"
-  },
-  {
     "Id": 4,
     "UserTypeId": 3,
     "Verified": true,
-    "Blocked": true,
+    "Blocked": false,
     "FirstName": "Peter",
     "LastName": "Gabriel",
     "GenderId": 1,
@@ -102,5 +89,18 @@
     "Avatar": "/Images_Data/User_Avatars/8e412968-fc77-41ee-849f-d9a7cbcdfb43.Jpeg",
     "Password": "password",
     "CreationDate": "2023-04-21T13:11:16"
+  },
+  {
+    "Id": 8,
+    "UserTypeId": 3,
+    "Verified": true,
+    "Blocked": false,
+    "FirstName": "Stéphane",
+    "LastName": "Chassé",
+    "GenderId": 2,
+    "Email": "Stephane.Chasse@clg.qc.ca",
+    "Avatar": "/Images_Data/User_Avatars/89ca9b58-9e3d-4c21-bb08-369f8f04b2fb.Jpeg",
+    "Password": "password",
+    "CreationDate": "2023-03-18T12:00:00"
   }
 ]

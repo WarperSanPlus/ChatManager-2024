@@ -16,6 +16,7 @@ namespace Repositories
             [typeof(Gender)] = new Repository<Gender>(),
 
             [typeof(Entry)] = new EntryRepository(),
+            [typeof(RelationShip)] = new RelationShipRepository(),
 
             [typeof(UnverifiedEmail)] = new Repository<UnverifiedEmail>(),
             [typeof(ResetPasswordCommand)] = new Repository<ResetPasswordCommand>(),

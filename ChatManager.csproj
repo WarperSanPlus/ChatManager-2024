@@ -109,8 +109,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Attributes\AssetAttribute.cs" />
-    <Compile Include="Models\BaseModel.cs" />
     <Compile Include="Models\RelationShip.cs" />
+    <Compile Include="Repositories\RelationShipRepository.cs" />
     <Compile Include="Resources\Labels.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -166,6 +166,7 @@
     <Content Include="Content\popup.css" />
     <Content Include="Content\selectionControl.css" />
     <Content Include="Content\LoginJournalStyles.css" />
+    <Content Include="Content\RelationStyles.css" />
     <Content Include="Content\UI-Icons\Abort.png" />
     <Content Include="Content\UI-Icons\Accept.png" />
     <Content Include="Content\UI-Icons\admin.png" />
@@ -207,6 +208,7 @@
     <Content Include="Content\bootstrap.min.css.map" />
     <Content Include="Content\bootstrap.css.map" />
     <Content Include="App_Data\Entrys.json" />
+    <Content Include="App_Data\RelationShips.json" />
     <None Include="Properties\PublishProfiles\ChatManager20240417083514 - Web Deploy.pubxml" />
     <None Include="Properties\PublishProfiles\MDB2023 - Web Deploy.pubxml" />
     <None Include="Properties\PublishProfiles\MoviesRepository - Web Deploy.pubxml" />
@@ -268,6 +270,7 @@
     <Content Include="Views\Accounts\LoginsJournal.cshtml" />
     <Content Include="Views\FriendShips\Index.cshtml" />
     <Content Include="Views\Accounts\GetEntries.cshtml" />
+    <Content Include="Views\FriendShips\GetRelations.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Views\Notifications\" />

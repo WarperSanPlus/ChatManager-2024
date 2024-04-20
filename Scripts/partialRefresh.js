@@ -48,6 +48,18 @@ class PartialRefresh {
             }
         });
     }
+    commandPost(url, data = null, callback = null) {
+        $.ajax({
+            url: url,
+            type: 'POST',
+            data: data,
+            success: () => {
+                this.refresh(true);
+                if (callback != null)
+                    callback();
+            }
+        });
+    }
 
     confirmedCommand(message, url, moreCallBack = null) {
         bootbox.confirm(message, (result) => { if (result) this.command(url, moreCallBack) });

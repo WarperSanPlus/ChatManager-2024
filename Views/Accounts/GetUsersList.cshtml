@@ -14,13 +14,12 @@
     if (item.Id != local.Id)
     {
         var emailReference = "mailto:" + item.Email;
-        bool isOnline = Models.OnlineUsers.IsOnLine(item.Id);
 <div class="userContainer" style="font-size:14px;">
     <a href="/Accounts/Edit/@item.Id" title="Compte créé le @item.CreationDate.ToShortDateString()">
         @Helper.AvatarUser(item, "UserSmallAvatar")
     </a>
     <div style="text-align:center" title="Status de connexion">
-        @Helper.OnLineStatusIcon(isOnline, item.Blocked)
+        @Helper.OnLineStatusIcon(item.IsOnline(), item.Blocked)
     </div>
     <div class="promoteUser" id="promote_@item.Id" href="/Accounts/PromoteUser?userid=@item.Id">
         @Helper.UserTypeIcon(item.UserTypeId)

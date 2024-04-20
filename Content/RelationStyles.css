@@ -1,0 +1,42 @@
+﻿.relation-parent {
+    display: flex;
+    align-items: center;
+
+    width: 100%;
+}
+
+.relation-user {
+    width: 15em;
+}
+
+/* RELATION STATUS */
+.blocked,
+.deny-pending,
+.cancel-pending,
+.denied {
+    color: red;
+}
+
+.canSend, 
+.pending, 
+.accept-pendin,
+.accepted {
+    color: green;
+}
+
+.canSend,
+.accept-pending,
+.deny-pending,
+.cancel-pending {
+    cursor: pointer
+}
+
+.relation-status {
+    display: flex;
+    align-items: center;
+
+    gap: 0.25em;
+ 
+    font-size: 24px;
+    height: 24px;
+}

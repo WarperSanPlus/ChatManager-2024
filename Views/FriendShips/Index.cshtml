@@ -3,3 +3,77 @@
 }
 
 <h2>Gestion des amitiés</h2>
+
+<hr />
+
+<div>
+    <!-- SEARCH SECTION -->
+</div>
+
+<hr />
+
+<div>
+    <div id="RelationsRefreshContainer"><!-- REFRESH CONTAINER --></div>
+</div>
+
+@section Scripts {
+    <script defer>
+        function sendFriendRequest(targetUserId) {
+            relations.commandPost("@Url.Action("CreateRequest")", {
+                targetUserId: targetUserId
+            });
+        };
+
+        function cancelFriendRequest(targetUserId) {
+            relations.commandPost("@Url.Action("CancelRequest")", {
+                targetUserId: targetUserId
+            });
+        };
+
+        function acceptFriendRequest(targetUserId) {
+            relations.commandPost("@Url.Action("AcceptRequest")", {
+                targetUserId: targetUserId,
+                isAccepting: true
+            });
+        };
+
+        function declineFriendRequest(targetUserId) {
+            relations.commandPost("@Url.Action("AcceptRequest")", {
+                targetUserId: targetUserId,
+                isAccepting: false
+            });
+        };
+
+        // --- PARTIAL REFRESH ---
+        function getTargetUserId(elem) {
+            return elem.closest('.relation-parent').attr('data-id');
+        }
+
+        let onRefresh = function () {
+            $(".canSend").click(function () {
+                sendFriendRequest(getTargetUserId($(this)));
+            });
+
+            $(".accept-pending").click(function () {
+                acceptFriendRequest(getTargetUserId($(this)));
+            });
+
+            $(".deny-pending").click(function () {
+                declineFriendRequest(getTargetUserId($(this)));
+            });
+
+            $(".cancel-pending").click(function () {
+                cancelFriendRequest(getTargetUserId($(this)));
+            });
+        };
+
+        let relations = new PartialRefresh("@Url.Action("GetRelations")", "RelationsRefreshContainer", 20, onRefresh);
+        // ---
+
+        //initTimeout(120);
+    </script>
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/Content/RelationStyles.css" />
+}
