@@ -62,8 +62,8 @@ namespace Repositories
                 if (value == null)
                     continue;
 
-                var assetsFolder = ((AssetAttribute)attribute).Folder();
-                var masterPath = HostingEnvironment.MapPath("~/" + assetsFolder);
+                // var assetsFolder = ((AssetAttribute)attribute).Folder();
+                var masterPath = HostingEnvironment.MapPath("~");
 
                 File.Delete(masterPath + "/" + value);
             }
@@ -105,13 +105,13 @@ namespace Repositories
                 if (prevData != null)
                     File.Delete(masterPath + property.GetValue(prevData));
 
-                var fileName = Guid.NewGuid().ToString() + "." + extension;
+                var fileName = asset.Folder() + Guid.NewGuid().ToString() + "." + extension;
 
                 // Update path
                 property.SetValue(data, fileName, null);
 
                 // Create image
-                File.WriteAllBytes(masterPath + "/" + asset.Folder() + fileName, bytes);
+                File.WriteAllBytes(masterPath + "/" + fileName, bytes);
             }
         }
         // retourne la valeur de l'attribut Id d'une instance de classe T

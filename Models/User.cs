@@ -13,13 +13,6 @@ namespace Models
 
         public User Clone() => JsonConvert.DeserializeObject<User>(JsonConvert.SerializeObject(this));
 
-        #region BaseModel
-
-        /// <inheritdoc/>
-        public override void PostInit() => this.Avatar = User_Avatars_Folder + this.Avatar;
-
-        #endregion
-
         #region Data Members
 
         public int Id { get; set; } = 0;
