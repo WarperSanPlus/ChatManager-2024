@@ -38,7 +38,7 @@ namespace Repositories
         #endregion initialization
 
         // Get repo with T
-        public static Repository<T> GetRepo<T>() where T : BaseModel => Tables.TryGetValue(typeof(T), out var repository)
+        public static Repository<T> GetRepo<T>() => Tables.TryGetValue(typeof(T), out var repository)
             ? (Repository<T>)repository
             : throw new NullReferenceException($"No repository found for the type '{typeof(T).Name}'.");
     }

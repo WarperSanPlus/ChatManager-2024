@@ -1,6 +1,6 @@
 ﻿namespace Models
 {
-    public class ResetPasswordCommand : BaseModel
+    public class ResetPasswordCommand
     {
         public int Id { get; set; }
         public int UserId { get; set; }

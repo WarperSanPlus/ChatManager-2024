@@ -3,7 +3,7 @@ using System;
 
 namespace Models
 {
-    public class Entry : BaseModel
+    public class Entry
     {
         public int Id { get; set; } = 0;
         public int IdUser { get; set; } = 0;

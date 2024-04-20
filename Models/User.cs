@@ -6,7 +6,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Models
 {
-    public class User : BaseModel
+    public class User
     {
         public const string User_Avatars_Folder = @"/Images_Data/User_Avatars/";
         public const string Default_Avatar = @"no_avatar.png";
@@ -83,6 +83,8 @@ namespace Models
 
             return this.FirstName + " " + this.LastName;
         }
+
+        public bool IsOnline() => OnlineUsers.IsOnLine(this.Id);
 
         #endregion View members
     }

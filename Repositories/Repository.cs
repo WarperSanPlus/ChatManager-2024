@@ -27,7 +27,7 @@ namespace Repositories
     // Author : Nicolas Chourot
     // date: Janvier 2024
     ///////////////////////////////////////////////////////////////
-    public class Repository<T> : Repository where T : BaseModel
+    public class Repository<T> : Repository
     {
         #region Private
 
@@ -154,9 +154,6 @@ namespace Repositories
                 }
 
                 this.dataList = this.dataList ?? new List<T>();
-
-                foreach (var item in this.dataList)
-                    item.PostInit();
             }
             catch (Exception)
             {

@@ -32,7 +32,7 @@ namespace Repositories
         {
             try
             {
-                User userToDelete = this.Get(userId);
+                var userToDelete = this.Get(userId);
 
                 if (userToDelete != null)
                 {
@@ -85,15 +85,15 @@ namespace Repositories
 
         public bool Verify_User(int userId, string code)
         {
-            User user = this.Get(userId);
+            var user = this.Get(userId);
 
             if (user == null)
                 return false;
 
-            Repository<UnverifiedEmail> emailsRepo = DB.GetRepo<UnverifiedEmail>();
+            var emailsRepo = DB.GetRepo<UnverifiedEmail>();
 
             // take the last email verification request
-            UnverifiedEmail unverifiedEmail = emailsRepo.ToList().Where(u => u.UserId == userId).FirstOrDefault();
+            var unverifiedEmail = emailsRepo.ToList().Where(u => u.UserId == userId).FirstOrDefault();
 
             if (unverifiedEmail == null)
                 return false;
@@ -124,12 +124,12 @@ namespace Repositories
 
         public bool ChangeEmail(string code)
         {
-            UnverifiedEmail unverifiedEmail = this.FindUnverifiedEmail(code);
+            var unverifiedEmail = this.FindUnverifiedEmail(code);
 
             if (unverifiedEmail == null)
                 return false;
 
-            User user = this.Get(unverifiedEmail.UserId);
+            var user = this.Get(unverifiedEmail.UserId);
 
             if (user == null)
                 return false;
@@ -157,7 +157,7 @@ namespace Repositories
 
         public bool EmailAvailable(string email, int excludedId = 0)
         {
-            User user = this.ToList().Where(u => u.Email.ToLower() == email.ToLower()).FirstOrDefault();
+            var user = this.ToList().Where(u => u.Email.ToLower() == email.ToLower()).FirstOrDefault();
             return user == null || user.Id == excludedId || user.Email.ToLower() != email.ToLower();
         }
 
@@ -165,13 +165,13 @@ namespace Repositories
 
         public bool EmailBlocked(string email)
         {
-            User user = this.ToList().Where(u => u.Email.ToLower() == email.ToLower()).FirstOrDefault();
+            var user = this.ToList().Where(u => u.Email.ToLower() == email.ToLower()).FirstOrDefault();
             return user == null || user.Blocked;
         }
 
         public bool EmailVerified(string email)
         {
-            User user = this.ToList().Where(u => u.Email.ToLower() == email.ToLower()).FirstOrDefault();
+            var user = this.ToList().Where(u => u.Email.ToLower() == email.ToLower()).FirstOrDefault();
             return user != null && user.Verified;
         }
 
@@ -199,10 +199,10 @@ namespace Repositories
 
         private void RemoveUnverifiedEmails(int userId)
         {
-            Repository<UnverifiedEmail> repository = DB.GetRepo<UnverifiedEmail>();
+            var repository = DB.GetRepo<UnverifiedEmail>();
 
             var UnverifiedEmails = repository.ToList().Where(u => u.UserId == userId).ToList();
-            foreach (UnverifiedEmail UnverifiedEmail in UnverifiedEmails)
+            foreach (var UnverifiedEmail in UnverifiedEmails)
                 _ = repository.Delete(UnverifiedEmail.Id);
         }
 
@@ -210,7 +210,7 @@ namespace Repositories
         {
             try
             {
-                User user = this.ToList().Where(u => u.Email == email).FirstOrDefault();
+                var user = this.ToList().Where(u => u.Email == email).FirstOrDefault();
                 if (user != null)
                 {
                     this.BeginTransaction();
@@ -237,16 +237,16 @@ namespace Repositories
 
         private void RemoveResetPasswordCommands(int userId)
         {
-            Repository<ResetPasswordCommand> repository = DB.GetRepo<ResetPasswordCommand>();
+            var repository = DB.GetRepo<ResetPasswordCommand>();
 
             var ResetPasswordCommands = repository.ToList().Where(r => r.UserId == userId).ToList();
-            foreach (ResetPasswordCommand ResetPasswordCommand in ResetPasswordCommands)
+            foreach (var ResetPasswordCommand in ResetPasswordCommands)
                 _ = repository.Delete(ResetPasswordCommand.Id);
         }
 
         public bool ResetPassword(int userId, string password)
         {
-            User user = this.Get(userId);
+            var user = this.Get(userId);
             if (user != null)
             {
                 user.Password = user.ConfirmPassword = password;
@@ -270,7 +270,7 @@ namespace Repositories
 
         public User GetUser(LoginCredential loginCredential)
         {
-            User user = this.ToList().Where(u => (u.Email.ToLower() == loginCredential.Email.ToLower()) &&
+            var user = this.ToList().Where(u => (u.Email.ToLower() == loginCredential.Email.ToLower()) &&
                                             (u.Password == loginCredential.Password))
                                 .FirstOrDefault();
             return user;
