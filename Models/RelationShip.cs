@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using Repositories;
-using System.Web.UI.WebControls;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Models
 {
@@ -14,7 +15,7 @@ namespace Models
         public int IdOrigin { get; set; }
         [JsonIgnore]
         public User Origin { get; set; }
-        
+
         public int IdDestination { get; set; }
         [JsonIgnore]
         public User Destination { get; set; }
@@ -27,7 +28,7 @@ namespace Models
             this.Destination = UsersRepository.GetUser(this.IdDestination);
         }
 
-        public bool IsUserInRelation(int userId) => this.IdOrigin == userId || this.IdDestination == userId;
+        public bool IsUserInRelation(int userId) => this.IdOrigin == userId || this.IdDestination == userId;
         public bool FromSessionUser() => this.IdOrigin == OnlineUsers.GetSessionUser().Id;
         public User GetOther() => this.FromSessionUser() ? this.Destination : this.Origin;
     }
@@ -38,5 +39,17 @@ namespace Models
         Pending = 0x1,
         Accepted = 0x2,
         Denied = 0x4,
+    }
+
+    public static class RelationExtension 
+    {
+        public static void KeepItems(
+            this IEnumerable<RelationShip> relations, 
+            ref List<int> indexes, 
+            System.Func<RelationShip, bool> predicate)
+        {
+            foreach (var item in relations.Where(predicate))
+                indexes.Add(item.Id);
+        }
     }
 }

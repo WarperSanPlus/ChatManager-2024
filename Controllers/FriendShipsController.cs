@@ -1,5 +1,7 @@
 ﻿using Models;
 using Repositories;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Web.Mvc;
 
@@ -10,7 +12,15 @@ namespace Controllers
     {
         public ActionResult Index() => this.View();
 
-        public ActionResult GetRelations(bool forceRefresh = false)
+        public ActionResult GetRelations(
+            bool forceRefresh = false,
+            string targetName = null,
+            bool showFriends = false,
+            bool showOthers = false,
+            bool showReceived = false,
+            bool showSent = false,
+            bool showDeclined = false,
+            bool showBlocked = false)
         {
             var relationRepo = RelationShipRepository.Instance;
             var userRepo = UsersRepository.Instance;
@@ -43,6 +53,14 @@ namespace Controllers
             foreach (var rel in relations)
                 rel.FetchUsers();
 
+            relations = relations.Where(r => r.GetOther().Verified);
+
+            // Search
+            var searchRelations = new List<int>();
+
+            // Utilise "relations.KeepItems()" ;3
+
+            relations = relations.Where(r => searchRelations.Contains(r.Id));
             relations = relations.OrderBy(r => r.GetOther().FirstName).ThenBy(r => r.GetOther().LastName);
 
             return this.PartialView(relations);

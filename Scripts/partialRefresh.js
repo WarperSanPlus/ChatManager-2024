@@ -1,12 +1,16 @@
 ﻿let EndSessionAction = '/Accounts/Login';
 class PartialRefresh {
-    constructor(serviceURL, container, refreshRate, postRefreshCallback = null) {
+    constructor(serviceURL, container, refreshRate, postRefreshCallback = null, instantRefresh = true) {
         this.serviceURL = serviceURL;
         this.container = container;
         this.postRefreshCallback = postRefreshCallback;
         this.refreshRate = refreshRate * 1000;
         this.paused = false;
-        this.refresh(true);
+        this.data = {};
+
+        if (instantRefresh)
+            this.refresh(true);
+
         setInterval(() => { this.refresh() }, this.refreshRate);
     }
     static setTimeOutPage(page) {
@@ -20,22 +24,42 @@ class PartialRefresh {
             if (this.postRefreshCallback != null) this.postRefreshCallback();
         }
     }
-    refresh(forced = false) {
-        if (!this.paused) {
-            $.ajax({
-                url: this.serviceURL + (forced ? (this.serviceURL.indexOf("?") > -1 ? "&" : "?") + "forceRefresh=true" : ""),
-                dataType: "html",
-                success: (htmlContent) => { this.replaceContent(htmlContent) },
-                statusCode: {
-                    403: function () {
-                        if (EndSessionAction != "")
-                            window.location = EndSessionAction + "?message=Compte bloqué";
-                        else
-                            alert("Illegal access!");
-                    }
+    replaceData(data = {}) {
+        if (data == null)
+            data = {};
+
+        this.data = data;
+    }
+    refresh(forced = false, data = null) {
+        if (this.paused)
+            return;
+
+        if (data != null)
+            this.data = data;
+
+        this.data.forceRefresh = forced;
+
+        let url = this.serviceURL;
+
+        if (url.indexOf("?") == -1)
+            url += "?";
+
+        for (const [key, value] of Object.entries(this.data))
+            url += `${key}=${value}&`;
+
+        $.ajax({
+            url: url,
+            dataType: "html",
+            success: (htmlContent) => { this.replaceContent(htmlContent) },
+            statusCode: {
+                403: function () {
+                    if (EndSessionAction != "")
+                        window.location = EndSessionAction + "?message=Compte bloqué";
+                    else
+                        alert("Illegal access!");
                 }
-            })
-        }
+            }
+        });
     }
     command(url, moreCallBack = null) {
         $.ajax({
