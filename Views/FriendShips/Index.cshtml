@@ -5,23 +5,23 @@
 <h2>Gestion des amitiés</h2>
 
 <hr />
-
 <div>
     <!-- SEARCH SECTION -->
+  
     <div>
 
-        <input type="text" id="targetNameInput" placeholder="Entrez un nom à rechercher" oninput="updateSearch('targetName', this.value)">
+        <input type="text" id="targetNameInput" placeholder="Entrez un nom..." oninput="updateSearch()">
         <i class="fa-solid fa-fw fa-search"></i>
-
     </div>
-        <label><input type="checkbox" onchange="updateSearch('showOthers', this.checked)"><i class="fa-solid fa-fw fa-plus-circle canSend"></i></label>
-        <label><input type="checkbox" onchange="updateSearch('showReceived', this.checked)"><i class="fa-solid fa-fw fa-check accept-pending"></i></label>
-        <label><input type="checkbox" onchange="updateSearch('showFriends', this.checked)"><i class="fa-solid fa-fw fa-circle-check accepted"></i></label>
-        <label><input type="checkbox" onchange="updateSearch('showSent', this.checked)"><i class="fa-solid fa-fw fa-hourglass-start pending"></i></label>
-        <label><input type="checkbox" onchange="updateSearch('showDeclined', this.checked)"><i class="fa fa-fw fa-times-circle denied"></i></label>
-        <label><input type="checkbox" onchange="updateSearch('showBlocked', this.checked)"><i class="fa-solid fa-fw fa-ban blocked"></i></label>
+  
 
-    </div>
+    <label><input type="checkbox" id="showOthersCheckbox" onchange="updateSearch()"><i class="fa-solid fa-fw fa-plus-circle canSend"></i></label>
+    <label><input type="checkbox" id="showReceivedCheckbox" onchange="updateSearch()"><i class="fa-solid fa-fw fa-check accept-pending"></i></label>
+    <label><input type="checkbox" id="showFriendsCheckbox" onchange="updateSearch()"><i class="fa-solid fa-fw fa-circle-check accepted"></i></label>
+    <label><input type="checkbox" id="showSentCheckbox" onchange="updateSearch()"><i class="fa-solid fa-fw fa-hourglass-start pending"></i></label>
+    <label><input type="checkbox" id="showDeclinedCheckbox" onchange="updateSearch()"><i class="fa fa-fw fa-times-circle denied"></i></label>
+    <label><input type="checkbox" id="showBlockedCheckbox" onchange="updateSearch()"><i class="fa-solid fa-fw fa-ban blocked"></i></label>
+</div>
 
 <hr />
 
@@ -31,22 +31,29 @@
 
 @section Scripts {
     <script defer>
-        function updateSearch(paramName, isChecked) {
-            let name = undefined;
-            let params = {
-                showFriends: false,
-                showOthers: false,
-                showReceived: false,
-                showSent: false,
-                showDeclined: false,
-                showBlocked: false,
-                targetName: name
-            };
+        function updateSearch() {
+           
+            let targetName = document.getElementById("targetNameInput").value;
 
-            // Mettre à jour le paramètre correspondant en fonction de la case cochée ou décochée
-            params[paramName] = isChecked;
+  
+            let showOthers = document.getElementById("showOthersCheckbox").checked;
+            let showReceived = document.getElementById("showReceivedCheckbox").checked;
+            let showFriends = document.getElementById("showFriendsCheckbox").checked;
+            let showSent = document.getElementById("showSentCheckbox").checked;
+            let showDeclined = document.getElementById("showDeclinedCheckbox").checked;
+            let showBlocked = document.getElementById("showBlockedCheckbox").checked;
 
-            relations.replaceData(params);
+        
+            relations.replaceData({
+                showOthers: showOthers,
+                showReceived: showReceived,
+                showFriends: showFriends,
+                showSent: showSent,
+                showDeclined: showDeclined,
+                showBlocked: showBlocked,
+                targetName: targetName
+            });
+
             relations.refresh(true);
         }
 
