@@ -10,17 +10,17 @@
   
     <div>
 
-        <input type="text" id="targetNameInput" placeholder="Entrez un nom..." oninput="updateSearch()">
-        <i class="fa-solid fa-fw fa-search"></i>
+        <input type="text" id="targetNameInput" placeholder="Entrez un nom...">
+        <i class="fa-solid fa-fw fa-search" onclick="updateSearch()"></i>
     </div>
   
 
-    <label><input type="checkbox" id="showOthersCheckbox" onchange="updateSearch()"><i class="fa-solid fa-fw fa-plus-circle canSend"></i></label>
-    <label><input type="checkbox" id="showReceivedCheckbox" onchange="updateSearch()"><i class="fa-solid fa-fw fa-check accept-pending"></i></label>
-    <label><input type="checkbox" id="showFriendsCheckbox" onchange="updateSearch()"><i class="fa-solid fa-fw fa-circle-check accepted"></i></label>
-    <label><input type="checkbox" id="showSentCheckbox" onchange="updateSearch()"><i class="fa-solid fa-fw fa-hourglass-start pending"></i></label>
-    <label><input type="checkbox" id="showDeclinedCheckbox" onchange="updateSearch()"><i class="fa fa-fw fa-times-circle denied"></i></label>
-    <label><input type="checkbox" id="showBlockedCheckbox" onchange="updateSearch()"><i class="fa-solid fa-fw fa-ban blocked"></i></label>
+    <label><input type="checkbox" id="showOthersCheckbox"><i class="fa-solid fa-fw fa-plus-circle"></i></label>
+    <label><input type="checkbox" id="showReceivedCheckbox"><i class="fa-solid fa-fw fa-check"></i></label>
+    <label><input type="checkbox" id="showFriendsCheckbox"><i class="fa-solid fa-fw fa-circle-check"></i></label>
+    <label><input type="checkbox" id="showSentCheckbox"><i class="fa-solid fa-fw fa-hourglass-start"></i></label>
+    <label><input type="checkbox" id="showDeclinedCheckbox"><i class="fa fa-fw fa-times-circle"></i></label>
+    <label><input type="checkbox" id="showBlockedCheckbox"><i class="fa-solid fa-fw fa-ban"></i></label>
 </div>
 
 <hr />
@@ -35,6 +35,8 @@
            
             let targetName = document.getElementById("targetNameInput").value;
 
+            if (targetName.trim().length == 0)
+                targetName = undefined;
   
             let showOthers = document.getElementById("showOthersCheckbox").checked;
             let showReceived = document.getElementById("showReceivedCheckbox").checked;
@@ -42,7 +44,6 @@
             let showSent = document.getElementById("showSentCheckbox").checked;
             let showDeclined = document.getElementById("showDeclinedCheckbox").checked;
             let showBlockeds = document.getElementById("showBlockedCheckbox").checked;
-
         
             relations.replaceData({
                 showOthers: showOthers,
@@ -53,7 +54,6 @@
                 showBlocked: showBlockeds,
                 targetName: targetName
             });
-            console.log(relations.data)
             relations.refresh(true);
         }
 
