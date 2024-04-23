@@ -61,12 +61,16 @@ namespace Controllers
 
             // Utilise "relations.KeepItems()" ;3
             relations.KeepItems(ref searchRelations, r => true);
-
+            var  listUser = userRepo.ToList();
+            var listUserBloquer = listUser.Where(r => r.Blocked);
             //relations = relations.Where(r => searchRelations.Contains(r.Id));
-            relations = relations.Where(r => r.State == RelationShipState.None && showOthers 
+            relations = relations.Where(
+                r => r.State == RelationShipState.None && showOthers 
             || r.State == RelationShipState.Accepted && showFriends
-            || r.State == RelationShipState.Pending && showSent
-            || r.State == RelationShipState.Denied && showDeclined);
+            || r.State == RelationShipState.Pending && showSent && r.FromSessionUser()
+            || r.State == RelationShipState.Denied && showDeclined
+            || r.Destination.Blocked && showBlocked
+            || r.State == RelationShipState.Pending && showReceived && !r.FromSessionUser()); 
             relations = relations.OrderBy(r => r.GetOther().FirstName).ThenBy(r => r.GetOther().LastName);
 
             return this.PartialView(relations);
