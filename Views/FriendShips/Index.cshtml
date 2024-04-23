@@ -8,7 +8,20 @@
 
 <div>
     <!-- SEARCH SECTION -->
-</div>
+    <div>
+
+        <input type="text" id="targetNameInput" placeholder="Entrez un nom à rechercher" oninput="updateSearch('targetName', this.value)">
+        <i class="fa-solid fa-fw fa-search"></i>
+
+    </div>
+        <label><input type="checkbox" onchange="updateSearch('showOthers', this.checked)"><i class="fa-solid fa-fw fa-plus-circle canSend"></i></label>
+        <label><input type="checkbox" onchange="updateSearch('showReceived', this.checked)"><i class="fa-solid fa-fw fa-check accept-pending"></i></label>
+        <label><input type="checkbox" onchange="updateSearch('showFriends', this.checked)"><i class="fa-solid fa-fw fa-circle-check accepted"></i></label>
+        <label><input type="checkbox" onchange="updateSearch('showSent', this.checked)"><i class="fa-solid fa-fw fa-hourglass-start pending"></i></label>
+        <label><input type="checkbox" onchange="updateSearch('showDeclined', this.checked)"><i class="fa fa-fw fa-times-circle denied"></i></label>
+        <label><input type="checkbox" onchange="updateSearch('showBlocked', this.checked)"><i class="fa-solid fa-fw fa-ban blocked"></i></label>
+
+    </div>
 
 <hr />
 
@@ -18,27 +31,24 @@
 
 @section Scripts {
     <script defer>
-        function search() {
-
-            let showFriends = false;
-            let showOthers = false;
-            let showReceived = false;
-            let showSent = false;
-            let showDeclined = false;
-            let showBlocked = false;
+        function updateSearch(paramName, isChecked) {
             let name = undefined;
-
-            relations.replaceData({
-                showFriends: showFriends,
-                showOthers: showOthers,
-                showReceived: showReceived,
-                showSent: showSent,
-                showDeclined: showDeclined,
-                showBlocked: showBlocked,
+            let params = {
+                showFriends: false,
+                showOthers: false,
+                showReceived: false,
+                showSent: false,
+                showDeclined: false,
+                showBlocked: false,
                 targetName: name
-            });
+            };
+
+            // Mettre à jour le paramètre correspondant en fonction de la case cochée ou décochée
+            params[paramName] = isChecked;
+
+            relations.replaceData(params);
             relations.refresh(true);
-        };
+        }
 
         function sendFriendRequest(targetUserId) {
             relations.commandPost("@Url.Action("CreateRequest")", {
