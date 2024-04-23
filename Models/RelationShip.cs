@@ -42,8 +42,8 @@ namespace Models
     }
 
     public static class RelationExtension 
-    {
-        public static void KeepItems(
+        {
+            public static void KeepItems(
             this IEnumerable<RelationShip> relations, 
             ref List<int> indexes, 
             System.Func<RelationShip, bool> predicate)

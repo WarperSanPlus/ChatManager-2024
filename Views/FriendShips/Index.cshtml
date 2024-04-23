@@ -41,7 +41,7 @@
             let showFriends = document.getElementById("showFriendsCheckbox").checked;
             let showSent = document.getElementById("showSentCheckbox").checked;
             let showDeclined = document.getElementById("showDeclinedCheckbox").checked;
-            let showBlocked = document.getElementById("showBlockedCheckbox").checked;
+            let showBlockeds = document.getElementById("showBlockedCheckbox").checked;
 
         
             relations.replaceData({
@@ -50,10 +50,10 @@
                 showFriends: showFriends,
                 showSent: showSent,
                 showDeclined: showDeclined,
-                showBlocked: showBlocked,
+                showBlocked: showBlockeds,
                 targetName: targetName
             });
-
+            console.log(relations.data)
             relations.refresh(true);
         }
 
