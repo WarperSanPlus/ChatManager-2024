@@ -40,16 +40,4 @@ namespace Models
         Accepted = 0x2,
         Denied = 0x4,
     }
-
-    public static class RelationExtension 
-    {
-        public static void KeepItems(
-            this IEnumerable<RelationShip> relations, 
-            ref List<int> indexes, 
-            System.Func<RelationShip, bool> predicate)
-        {
-            foreach (var item in relations.Where(predicate))
-                indexes.Add(item.Id);
-        }
-    }
 }

@@ -54,13 +54,6 @@ namespace Controllers
                 rel.FetchUsers();
 
             relations = relations.Where(r => r.GetOther().Verified);
-
-            // Search
-            var searchRelations = new List<int>();
-
-            // Utilise "relations.KeepItems()" ;3
-
-            relations = relations.Where(r => searchRelations.Contains(r.Id));
             relations = relations.OrderBy(r => r.GetOther().FirstName).ThenBy(r => r.GetOther().LastName);
 
             return this.PartialView(relations);
