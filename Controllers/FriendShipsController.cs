@@ -55,12 +55,12 @@ namespace Controllers
             relations = relations.Where(r => r.GetOther().Verified);
 
             // Search
-            relations = relations.Where(r => (r.State == RelationShipState.None && showOthers)
-                || (r.State == RelationShipState.Accepted && showFriends)
-                || (r.State == RelationShipState.Pending && r.FromSessionUser() && showSent)
-                || (r.State == RelationShipState.Pending && !r.FromSessionUser() && showReceived)
-                || (r.State == RelationShipState.Denied && showDeclined)
-                || (r.GetOther().Blocked && showBlocked)
+            relations = relations.Where(r => (showOthers && r.State == RelationShipState.None)
+                || (showFriends && r.State == RelationShipState.Accepted)
+                || (showSent && r.State == RelationShipState.Pending && r.FromSessionUser())
+                || (showReceived && r.State == RelationShipState.Pending && !r.FromSessionUser())
+                || (showDeclined && r.State == RelationShipState.Denied)
+                || (showBlocked && r.GetOther().Blocked)
                 || (targetName != null && r.GetOther().GetFullName().ToLower().Contains(targetName.ToLower()))
             );
             relations = relations.OrderBy(r => r.GetOther().FirstName).ThenBy(r => r.GetOther().LastName);
