@@ -1,10 +1,7 @@
 ﻿using Models;
 using Repositories;
-using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Web.Mvc;
-using System.Web.Services.Description;
 
 namespace Controllers
 {
@@ -30,7 +27,7 @@ namespace Controllers
                 return null;
 
             var userId = OnlineUsers.GetSessionUser().Id;
-            var relations = relationRepo.GetRelationShips().Where(r => r.IsUserInRelation(userId));
+            var relations = relationRepo.GetRelationShips().Where(r => r.IsUserInRelation(userId));
 
             // Fill missing users
             foreach (var item in userRepo.ToList())
@@ -57,16 +54,11 @@ namespace Controllers
             relations = relations.Where(r => r.GetOther().Verified);
 
             // Search
-            var searchRelations = new List<int>();
-
-            // Utilise "relations.KeepItems()" ;3
-            relations.KeepItems(ref searchRelations, r => true);
-
-            //relations = relations.Where(r => searchRelations.Contains(r.Id));
-            relations = relations.Where(r => r.State == RelationShipState.None && showOthers 
-            || r.State == RelationShipState.Accepted && showFriends
-            || r.State == RelationShipState.Pending && showSent
-            || r.State == RelationShipState.Denied && showDeclined);
+            relations = relations.Where(r => (r.State == RelationShipState.None && showOthers)
+                || (r.State == RelationShipState.Accepted && showFriends)
+                || (r.State == RelationShipState.Pending && showSent)
+                || (r.State == RelationShipState.Denied && showDeclined)
+            );
             relations = relations.OrderBy(r => r.GetOther().FirstName).ThenBy(r => r.GetOther().LastName);
 
             return this.PartialView(relations);
@@ -80,7 +72,7 @@ namespace Controllers
             var repo = RelationShipRepository.Instance;
 
             var relation = repo.GetRelationShip(localUserId, targetUserId);
-            
+
             // If the relation doesn't exist, skip
             if (relation == null)
                 return null;
@@ -111,11 +103,11 @@ namespace Controllers
             var repo = RelationShipRepository.Instance;
 
             var relation = repo.GetRelationShip(localUserId, targetUserId);
-            
+
             if (relation != null)
             {
                 // If not denied by local, skip
-                if (!relation.FromSessionUser() || relation.State != RelationShipState.Denied)
+                if (!relation.FromSessionUser() || relation.State != RelationShipState.Denied)
                     return null;
 
                 relation.State = RelationShipState.Pending;
@@ -135,7 +127,7 @@ namespace Controllers
             return null;
         }
 
-        public JsonResult CancelRequest(int targetUserId) 
+        public JsonResult CancelRequest(int targetUserId)
         {
             var localUserId = OnlineUsers.GetSessionUser().Id;
             var repo = RelationShipRepository.Instance;
@@ -143,13 +135,13 @@ namespace Controllers
             var relation = repo.GetRelationShip(localUserId, targetUserId);
 
             // If relation doesn't exist, skip
-            if (relation == null) 
+            if (relation == null)
                 return null;
 
             // Remove relation
             _ = repo.Delete(relation.Id);
 
-            return null; 
+            return null;
         }
 
         #endregion
