@@ -63,10 +63,13 @@ namespace Controllers
                 || (showBlocked && r.GetOther().Blocked));
 
             if (targetName != null)
+            {
                 targetName = targetName.ToLower();
+             
+                if (targetName.Length > 0)
+                    relations = relations.Where(r => r.GetOther().GetFullName().ToLower().Contains(targetName));
+            }
 
-            relations = relations.Where(r => targetName.Length == 0 || r.GetOther().GetFullName().ToLower().Contains(targetName));
-           
             // Sort by first name, than last name
             relations = relations.OrderBy(r => r.GetOther().FirstName).ThenBy(r => r.GetOther().LastName);
 
