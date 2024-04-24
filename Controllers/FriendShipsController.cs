@@ -28,7 +28,7 @@ namespace Controllers
                 return null;
 
             var userId = OnlineUsers.GetSessionUser().Id;
-            var relations = relationRepo.GetRelationShips().Where(r => r.IsUserInRelation(userId));
+            var relations = relationRepo.ToList().Where(r => r.IsUserInRelation(userId));
 
             // Fill missing users
             foreach (var item in userRepo.ToList())
