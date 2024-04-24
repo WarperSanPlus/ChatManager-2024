@@ -7,24 +7,36 @@
 <hr />
 <div>
     <!-- SEARCH SECTION -->
-  
-    <div>
+
+    <div id="search-bar">
 
         <input type="text" id="targetNameInput" placeholder="Entrez un nom...">
-        <i class="fa-solid fa-fw fa-search" onclick="updateSearch()"></i>
+        <i id="search-btn" class="fa-solid fa-fw fa-search"></i>
     </div>
-  
 
-    <label><input type="checkbox" id="showOthersCheckbox"><i class="fa-solid fa-fw fa-plus-circle"></i></label>
-    <label><input type="checkbox" id="showReceivedCheckbox"><i class="fa-solid fa-fw fa-check"></i></label>
-    <label><input type="checkbox" id="showFriendsCheckbox"><i class="fa-solid fa-fw fa-circle-check"></i></label>
-    <label><input type="checkbox" id="showSentCheckbox"><i class="fa-solid fa-fw fa-hourglass-start"></i></label>
-    <label><input type="checkbox" id="showDeclinedCheckbox"><i class="fa fa-fw fa-times-circle"></i></label>
-    <label><input type="checkbox" id="showBlockedCheckbox"><i class="fa-solid fa-fw fa-ban"></i></label>
+    <div>
+        <label>
+            <input type="checkbox" id="showOthersCheckbox" checked><i class="fa-solid fa-fw fa-plus-circle positive" title="Demande possible"></i>
+        </label>
+        <label>
+            <input type="checkbox" id="showReceivedCheckbox" checked><i class="fa-solid fa-fw fa-check positive" title="À accepter"></i>
+        </label>
+        <label>
+            <input type="checkbox" id="showFriendsCheckbox" checked><i class="fa-solid fa-fw fa-circle-check positive" title="Amis"></i>
+        </label>
+        <label>
+            <input type="checkbox" id="showSentCheckbox" checked><i class="fa-solid fa-fw fa-hourglass-start positive" title="En attente"></i>
+        </label>
+        <label>
+            <input type="checkbox" id="showDeclinedCheckbox" checked><i class="fa fa-fw fa-times-circle negative" title="Demande déclinée"></i>
+        </label>
+        <label>
+            <input type="checkbox" id="showBlockedCheckbox" checked><i class="fa-solid fa-fw fa-ban negative" title="Bloqué"></i>
+        </label>
+    </div>
 </div>
 
 <hr />
-
 <div>
     <div id="RelationsRefreshContainer"><!-- REFRESH CONTAINER --></div>
 </div>
@@ -32,19 +44,19 @@
 @section Scripts {
     <script defer>
         function updateSearch() {
-           
+
             let targetName = document.getElementById("targetNameInput").value;
 
             if (targetName.trim().length == 0)
                 targetName = undefined;
-  
+
             let showOthers = document.getElementById("showOthersCheckbox").checked;
             let showReceived = document.getElementById("showReceivedCheckbox").checked;
             let showFriends = document.getElementById("showFriendsCheckbox").checked;
             let showSent = document.getElementById("showSentCheckbox").checked;
             let showDeclined = document.getElementById("showDeclinedCheckbox").checked;
             let showBlockeds = document.getElementById("showBlockedCheckbox").checked;
-        
+
             relations.replaceData({
                 showOthers: showOthers,
                 showReceived: showReceived,
@@ -110,7 +122,7 @@
         // ---
 
         updateSearch();
-
+        $("#search-btn").click(updateSearch)
         //initTimeout(120);
     </script>
 }
