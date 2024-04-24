@@ -2,7 +2,10 @@
     ViewBag.Title = "Index";
 }
 
-<h2>Gestion des amitiés</h2>
+<h2>
+    @Helper.Image("/Content/UI-Icons/friendships.png", "UserSmallAvatar")
+    <span>Gestion des amitiés</span>
+</h2>
 
 <hr />
 <div>
@@ -10,28 +13,28 @@
 
     <div id="search-bar">
 
-        <input type="text" id="targetNameInput" placeholder="Entrez un nom...">
-        <i id="search-btn" class="fa-solid fa-fw fa-search"></i>
+        <input type="text" id="targetNameInput" placeholder="recherche..." class="form-control">
+        <i id="search-btn" class="fa-solid fa-fw fa-search" title="Rechercher"></i>
     </div>
 
-    <div>
-        <label>
-            <input type="checkbox" id="showOthersCheckbox" checked><i class="fa-solid fa-fw fa-plus-circle positive" title="Demande possible"></i>
+    <div id="search-criterias">
+        <label title="Demande possible">
+            <input type="checkbox" id="showOthersCheckbox" checked><i class="fa-solid fa-fw fa-plus-circle positive"></i>
         </label>
-        <label>
-            <input type="checkbox" id="showReceivedCheckbox" checked><i class="fa-solid fa-fw fa-check positive" title="À accepter"></i>
+        <label title="À accepter">
+            <input type="checkbox" id="showReceivedCheckbox" checked><i class="fa-solid fa-fw fa-check positive"></i>
         </label>
-        <label>
-            <input type="checkbox" id="showFriendsCheckbox" checked><i class="fa-solid fa-fw fa-circle-check positive" title="Amis"></i>
+        <label title="Amis">
+            <input type="checkbox" id="showFriendsCheckbox" checked><i class="fa-solid fa-fw fa-circle-check positive"></i>
         </label>
-        <label>
-            <input type="checkbox" id="showSentCheckbox" checked><i class="fa-solid fa-fw fa-hourglass-start positive" title="En attente"></i>
+        <label title="En attente">
+            <input type="checkbox" id="showSentCheckbox" checked><i class="fa-solid fa-fw fa-hourglass-start positive"></i>
         </label>
-        <label>
-            <input type="checkbox" id="showDeclinedCheckbox" checked><i class="fa fa-fw fa-times-circle negative" title="Demande déclinée"></i>
+        <label title="Demande déclinée">
+            <input type="checkbox" id="showDeclinedCheckbox" checked><i class="fa fa-fw fa-times-circle negative"></i>
         </label>
-        <label>
-            <input type="checkbox" id="showBlockedCheckbox" checked><i class="fa-solid fa-fw fa-ban negative" title="Bloqué"></i>
+        <label title="Bloqué">
+            <input type="checkbox" id="showBlockedCheckbox" checked><i class="fa-solid fa-fw fa-ban negative"></i>
         </label>
     </div>
 </div>
@@ -45,10 +48,7 @@
     <script defer>
         function updateSearch() {
 
-            let targetName = document.getElementById("targetNameInput").value;
-
-            if (targetName.trim().length == 0)
-                targetName = undefined;
+            let targetName = document.getElementById("targetNameInput").value.trim();
 
             let showOthers = document.getElementById("showOthersCheckbox").checked;
             let showReceived = document.getElementById("showReceivedCheckbox").checked;
@@ -118,7 +118,7 @@
             });
         };
 
-        let relations = new PartialRefresh("@Url.Action("GetRelations")", "RelationsRefreshContainer", 20, onRefresh, false);
+        let relations = new PartialRefresh("@Url.Action("GetRelations")", "RelationsRefreshContainer", 1, onRefresh, false);
         // ---
 
         updateSearch();

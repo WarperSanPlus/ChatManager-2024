@@ -13,7 +13,7 @@ namespace Controllers
 
         public ActionResult GetRelations(
             bool forceRefresh = false,
-            string targetName = null,
+            string targetName = "",
             bool showFriends = false,
             bool showOthers = true,
             bool showReceived = false,
@@ -24,7 +24,7 @@ namespace Controllers
             var relationRepo = RelationShipRepository.Instance;
             var userRepo = UsersRepository.Instance;
 
-            if (!forceRefresh && !relationRepo.HasChanged && !userRepo.HasChanged)
+            if (!forceRefresh && !relationRepo.HasChanged && !userRepo.HasChanged && !OnlineUsers.HasChanged())
                 return null;
 
             var userId = OnlineUsers.GetSessionUser().Id;
@@ -60,9 +60,14 @@ namespace Controllers
                 || (showSent && r.State == RelationShipState.Pending && r.FromSessionUser())
                 || (showReceived && r.State == RelationShipState.Pending && !r.FromSessionUser())
                 || (showDeclined && r.State == RelationShipState.Denied)
-                || (showBlocked && r.GetOther().Blocked)
-                || (targetName != null && r.GetOther().GetFullName().ToLower().Contains(targetName.ToLower()))
-            );
+                || (showBlocked && r.GetOther().Blocked));
+
+            if (targetName != null)
+                targetName = targetName.ToLower();
+
+            relations = relations.Where(r => targetName.Length == 0 || r.GetOther().GetFullName().ToLower().Contains(targetName));
+           
+            // Sort by first name, than last name
             relations = relations.OrderBy(r => r.GetOther().FirstName).ThenBy(r => r.GetOther().LastName);
 
             return this.PartialView(relations);
