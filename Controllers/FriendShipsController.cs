@@ -127,6 +127,10 @@ namespace Controllers
             }
             else
             {
+                // Skip if target doesn't exist
+                if (UsersRepository.GetUser(targetUserId) == null)
+                    return null;
+
                 // Add new relation
                 _ = repo.Add(new RelationShip()
                 {
