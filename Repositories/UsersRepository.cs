@@ -43,6 +43,7 @@ namespace Repositories
                     this.EndTransaction();
 
                     EntryRepository.Instance.UtilisateurEntrerSupprimer(userId);
+                    RelationShipRepository.Instance.SuprimerUserFriend(userId);
 
                     return true;
                 }
