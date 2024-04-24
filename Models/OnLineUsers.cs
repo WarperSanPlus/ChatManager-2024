@@ -80,6 +80,8 @@ namespace Models
                     NouvelEntrer.End = isLegit ? DateTime.Now : NouvelEntrer.Start;
                     _ = EntryRepository.Instance.Update(NouvelEntrer);
                 }
+                RelationShipRepository.Instance.SuprimerUserFriend(user.Id);
+
             }
 
             SetHasChanged();
