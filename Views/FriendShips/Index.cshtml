@@ -98,29 +98,37 @@
             });
         };
 
-        function cancelFriendRequest(targetUserId) {
+        function cancelFriendRequest(targetUserId, targetUserName) {
+            popup(`Voulez-vous vraiment annuler la demande  en amitié  de ${targetUserName} ?`, function () {
             relations.commandPost("@Url.Action("CancelRequest")", {
                 targetUserId: targetUserId
             });
+            });
         };
 
-        function acceptFriendRequest(targetUserId) {
+        function acceptFriendRequest(targetUserId, targetUserName) {
+            popup(`Voulez-vous vraiment accepter la demande  en amitié  de ${targetUserName} ?`, function () {
             relations.commandPost("@Url.Action("AcceptRequest")", {
                 targetUserId: targetUserId,
                 isAccepting: true
             });
+            });
         };
 
-        function declineFriendRequest(targetUserId) {
+        function declineFriendRequest(targetUserId, targetUserName) {
+                popup(`Voulez-vous vraiment refuser la demande  en amitié  de ${targetUserName} ?`, function () {
             relations.commandPost("@Url.Action("AcceptRequest")", {
                 targetUserId: targetUserId,
                 isAccepting: false
             });
+                });
         };
 
-        function removeFriend(targetUserId) {
+        function removeFriend(targetUserId, targetUserName) {
+            popup(`Voulez-vous vraiment retiré votre précieux ami ${targetUserName} ?`, function () {
             relations.commandPost("@Url.Action("CancelRequest")", {
                 targetUserId: targetUserId
+            });
             });
         };
 
