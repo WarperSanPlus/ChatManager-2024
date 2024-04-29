@@ -1,6 +1,5 @@
 ﻿using Models;
 using Repositories;
-using System.Diagnostics;
 using System.Linq;
 using System.Web.Mvc;
 
@@ -98,12 +97,12 @@ namespace Controllers
             if (isAccepting)
             {
                 relation.State = RelationShipState.Accepted;
-                OnlineUsers.AddNotification(targetUserId, "votre requete a été accepter ");
+                OnlineUsers.AddNotification(targetUserId, usager.GetFullName() + " a accepté(e) votre requête");
                 
             }
             else
             {
-                OnlineUsers.AddNotification(targetUserId, "votre requete a été reffuser ");
+                OnlineUsers.AddNotification(targetUserId, usager.GetFullName() + " a refusé(e) votre requête");
                 relation.State = RelationShipState.Denied;
                 (relation.IdOrigin, relation.IdDestination) = (relation.IdDestination, relation.IdOrigin);
             }
@@ -128,7 +127,6 @@ namespace Controllers
                     return null;
 
                 relation.State = RelationShipState.Pending;
-                  OnlineUsers.AddNotification(targetUserId, $"Vous avez recu une demande d'amitié de {usager} allé la voir sa presse ");
                 _ = repo.Update(relation);
             }
             else
@@ -136,7 +134,6 @@ namespace Controllers
                 // Skip if target doesn't exist
                 if (UsersRepository.GetUser(targetUserId) == null)
                     return null;
-                OnlineUsers.AddNotification(targetUserId, $"Vous avez recu une demande d'amitié de {usager} il avais déja refuser votre requête  voulez vous l'accepter malgrès l'énorme erreur qu'il a commit de vous refuser? ");
                 // Add new relation
                 _ = repo.Add(new RelationShip()
                 {
@@ -145,6 +142,8 @@ namespace Controllers
                     State = RelationShipState.Pending,
                 });
             }
+
+            OnlineUsers.AddNotification(targetUserId, $"Vous avez reçu une demande d'amitié de {usager.GetFullName()}");
 
             return null;
         }
@@ -156,8 +155,7 @@ namespace Controllers
             var repo = RelationShipRepository.Instance;
 
             var relation = repo.GetRelationShip(localUserId, targetUserId);
-            OnlineUsers.AddNotification(targetUserId, $"{usager} a refusé votre requête comme c'est triste bonne chance pour votre prochainne tentative de socialisation" +
-                $" ");
+            OnlineUsers.AddNotification(targetUserId, $"{usager.GetFullName()} a refusé(e) votre requête");
             // If relation doesn't exist, skip
             if (relation == null)
                 return null;
