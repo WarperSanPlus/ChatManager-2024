@@ -21,6 +21,7 @@ h2 {
 .deny-pending,
 .cancel-pending,
 .denied,
+.remove,
 .negative {
     color: red;
 }
@@ -36,7 +37,8 @@ h2 {
 .canSend,
 .accept-pending,
 .deny-pending,
-.cancel-pending {
+.cancel-pending,
+.remove {
     cursor: pointer
 }
 

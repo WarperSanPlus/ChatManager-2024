@@ -46,7 +46,7 @@
 
 @section Scripts {
     <script defer>
-        function updateSearch() {
+        function search() {
 
             let targetName = document.getElementById("targetNameInput").value.trim();
 
@@ -95,6 +95,12 @@
             });
         };
 
+        function removeFriend(targetUserId) {
+            relations.commandPost("@Url.Action("CancelRequest")", {
+                targetUserId: targetUserId
+            });
+        };
+
         // --- PARTIAL REFRESH ---
         function getTargetUserId(elem) {
             return elem.closest('.relation-parent').attr('data-id');
@@ -116,14 +122,19 @@
             $(".cancel-pending").click(function () {
                 cancelFriendRequest(getTargetUserId($(this)));
             });
+
+            $(".remove").click(function () {
+                removeFriend(getTargetUserId($(this)));
+            });
         };
 
         let relations = new PartialRefresh("@Url.Action("GetRelations")", "RelationsRefreshContainer", 1, onRefresh, false);
         // ---
 
-        updateSearch();
-        $("#search-btn").click(updateSearch)
-        //initTimeout(120);
+        search();
+        $("#search-btn").click(search)
+        $("#search-criterias input").click(search);
+        initTimeout(120);
     </script>
 }
 
