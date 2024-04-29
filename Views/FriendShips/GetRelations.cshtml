@@ -8,7 +8,7 @@
 
     var name = target.GetFullName();
 
-    <div class="relation-parent" data-id="@target.Id">
+    <div class="relation-parent" data-id="@target.Id" data-name="@name">
         <div class="relation-user">
             @Helper.AvatarUser(target, "UserSmallAvatar")
         </div>

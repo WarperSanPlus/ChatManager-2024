@@ -67,11 +67,34 @@
                 targetName: targetName
             });
             relations.refresh(true);
+        };
+
+        function popup(message, callback = null) {
+            bootbox.confirm({
+                message: message,
+                buttons: {
+                    confirm: {
+                        label: 'Oui',
+                        className: 'btn-success'
+                    },
+                    cancel: {
+                        label: 'Non',
+                        className: 'btn-danger'
+                    }
+                },
+                callback: function (result) {
+
+                    if (result && callback != null)
+                        callback();
+                }
+            });
         }
 
-        function sendFriendRequest(targetUserId) {
-            relations.commandPost("@Url.Action("CreateRequest")", {
-                targetUserId: targetUserId
+        function sendFriendRequest(targetUserId, targetUserName) {
+            popup(`Voulez-vous vraiment demander en amitié ${targetUserName} ?`, function () {
+                relations.commandPost("@Url.Action("CreateRequest")", {
+                    targetUserId: targetUserId
+                });
             });
         };
 
@@ -104,28 +127,29 @@
         // --- PARTIAL REFRESH ---
         function getTargetUserId(elem) {
             return elem.closest('.relation-parent').attr('data-id');
-        }
+        };
+
+        function getTargetUserName(elem) {
+            return elem.closest('.relation-parent').attr('data-name');
+        };
 
         let onRefresh = function () {
-            $(".canSend").click(function () {
-                sendFriendRequest(getTargetUserId($(this)));
-            });
+            let functions = {
+                "canSend": sendFriendRequest,
+                "accept-pending": acceptFriendRequest,
+                "deny-pending": declineFriendRequest,
+                "cancel-pending": cancelFriendRequest,
+                "remove": removeFriend
+            };
 
-            $(".accept-pending").click(function () {
-                acceptFriendRequest(getTargetUserId($(this)));
-            });
+            for (const [key, value] of Object.entries(functions)) {
+                $("." + key).click(function () {
+                    let id = getTargetUserId($(this));
+                    let name = getTargetUserName($(this));
 
-            $(".deny-pending").click(function () {
-                declineFriendRequest(getTargetUserId($(this)));
-            });
-
-            $(".cancel-pending").click(function () {
-                cancelFriendRequest(getTargetUserId($(this)));
-            });
-
-            $(".remove").click(function () {
-                removeFriend(getTargetUserId($(this)));
-            });
+                    value(id, name);
+                });
+            }
         };
 
         let relations = new PartialRefresh("@Url.Action("GetRelations")", "RelationsRefreshContainer", 1, onRefresh, false);
