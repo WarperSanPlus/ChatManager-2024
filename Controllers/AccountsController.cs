@@ -453,6 +453,7 @@ namespace Controllers
             return this.Json(UsersRepository.Instance.Update(user), JsonRequestBehavior.AllowGet);
         }
 
+        [OnlineUsers.AdminAccess]
         public JsonResult PromoteUser(int userid)
         {
             var user = UsersRepository.Instance.Get(userid);
