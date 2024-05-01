@@ -1,0 +1,19 @@
+﻿@model IEnumerable<Models.User>
+
+@foreach (var user in Model)
+{
+    var id = user.Id;
+    var name = user.GetFullName();
+    var image = user.Avatar;
+    var isOnline = user.IsOnline();
+
+    var title = name + " n'est pas connecté(e)";
+    if (isOnline)
+    {
+        title = name + " est connecté(e)";
+    }
+
+    <div class="chat-friend" data-id="@id" title="@title">
+        <div class="UserSmallAvatar" style="background-image: url('@image')"></div>
+    </div>
+}

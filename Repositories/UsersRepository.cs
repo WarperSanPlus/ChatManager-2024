@@ -44,6 +44,7 @@ namespace Repositories
 
                     EntryRepository.Instance.UtilisateurEntrerSupprimer(userId);
                     RelationShipRepository.Instance.SuprimerUserFriend(userId);
+                    MessageRepository.Instance.DeleteMessages(userId);
 
                     return true;
                 }

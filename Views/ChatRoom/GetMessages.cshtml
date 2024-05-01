@@ -1,0 +1,23 @@
+﻿@model IEnumerable<IGrouping<int, Models.Message>>
+
+@foreach (var group in Model)
+{
+    @group.Key
+    foreach (var message in group)
+    {
+        var content = message.Content;
+        var fromLocal = message.FromSessionUser();
+        var messageClass = fromLocal ? "own" : "other";
+        var date = message.SentAt.ToString("H:m:s");
+        var title = fromLocal ? "Envoyé à " + date : "Reçu à " + date;
+
+        <div class="chat-message @messageClass" title="@title">
+            @Helper.ParseContent(content)
+        </div>
+    }
+}
+
+@if (Model.Count() == 0)
+{
+    <div>C'est le début d'une discussion légendaire</div>
+}

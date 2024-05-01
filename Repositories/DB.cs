@@ -20,6 +20,8 @@ namespace Repositories
 
             [typeof(UnverifiedEmail)] = new Repository<UnverifiedEmail>(),
             [typeof(ResetPasswordCommand)] = new Repository<ResetPasswordCommand>(),
+
+            [typeof(Message)] = new MessageRepository(),
         };
 
         #endregion Repositories

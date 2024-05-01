@@ -73,6 +73,7 @@ class PartialRefresh {
         });
     }
     commandPost(url, data = null, callback = null) {
+        console.log(data);
         $.ajax({
             url: url,
             type: 'POST',

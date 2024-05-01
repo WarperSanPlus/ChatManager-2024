@@ -1,5 +1,92 @@
 ﻿@{
     ViewBag.Title = "Index";
+
+    bool isAdmin = true;
 }
 
-<h2>Salle de clavardage</h2>
+<div id="header-container">
+    @if (isAdmin)
+    {
+        @Helper.ImageCmd("ChatRoom", "", "~/Content/UI-Icons/chatRoom.png", "UserSmallAvatar", "Modérer les messages");
+    }
+    <h2>Salle de discussions</h2>
+</div>
+<hr />
+
+<div id="ChatRoomContainer">
+    <div id="OnlineFriendsContainer"><!-- FRIENDS --></div>
+    <div id="ChatBoxContainer">
+        <div>
+            <!-- CHAT BOX HEADER -->
+        </div>
+        <div id="ChatMessagesContainer">
+            <!-- MESSAGES -->
+        </div>
+    </div>
+    <div id="ChatInputContainer">
+        <div id="chat-message-form">
+            <input id="chat-message-input" type="text" placeholder="Tapez votre message ici ..." />
+            <button id="chat-message-submit">
+                <i class="fa-solid fa-paper-plane" aria-hidden="true"></i>
+            </button>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script defer>
+        initTimeout(300);
+
+        /* FRIENDS PR */
+        let onFriendsRefresh = function () {
+            $(".chat-friend").click(function () {
+                let isSelected = $(this).hasClass("selected");
+                let userId = isSelected ? undefined : $(this).data("id");
+
+                // Generate key
+                // Call ajax
+                // Update chat box
+                messages.replaceData({
+                    userId: userId
+                });
+                messages.refresh(true);
+
+                // Update select
+                $(".chat-friend").removeClass("selected");
+
+                if (!isSelected)
+                    $(this).addClass("selected");
+            });
+        };
+
+        let friends = new PartialRefresh("@Url.Action("GetOnlineFriends")", "OnlineFriendsContainer", 15, onFriendsRefresh, true);
+
+        /* MESSAGES PR */
+        let onMessageRefresh = function () {
+
+        };
+        $("#chat-message-input").on("keydown", function (event) {
+            if (event.key === 'Enter')
+                sendMessage();
+        });
+
+        function sendMessage() {
+            let content = $("#chat-message-input").val();
+            let userId = $(".chat-friend:is(.selected)").data("id");
+
+            messages.commandPost("@Url.Action("AddMessage")", {
+                userId: userId,
+                content: content
+            }, function () {
+                $("#chat-message-input").val("");
+            });
+        };
+
+        let messages = new PartialRefresh("@Url.Action("GetMessages")", "ChatMessagesContainer", 1000, onMessageRefresh, false);
+        $("#chat-message-submit").click(sendMessage);
+    </script>
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/Content/ChatRoomStyles.css" />
+}
