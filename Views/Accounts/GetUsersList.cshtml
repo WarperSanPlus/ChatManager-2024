@@ -15,7 +15,7 @@
     {
         var emailReference = "mailto:" + item.Email;
 <div class="userContainer" style="font-size:14px;">
-    <a href="/Accounts/Edit/@item.Id" title="Compte créé le @item.CreationDate.ToShortDateString()">
+    <a href="/Accounts/Edit?userId=@item.Id" title="Compte créé le @item.CreationDate.ToShortDateString()">
         @Helper.AvatarUser(item, "UserSmallAvatar")
     </a>
     <div style="text-align:center" title="Status de connexion">

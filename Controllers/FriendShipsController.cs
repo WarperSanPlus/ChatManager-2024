@@ -54,7 +54,7 @@ namespace Controllers
             relations = relations.Where(r => r.GetOther().Verified);
 
             // Search
-            relations = relations.Where(r => (showOthers && r.State == RelationShipState.None)
+            relations = relations.Where(r => (showOthers && !r.GetOther().Blocked && r.State == RelationShipState.None)
                 || (showFriends && r.State == RelationShipState.Accepted)
                 || (showSent && r.State == RelationShipState.Pending && r.FromSessionUser())
                 || (showReceived && r.State == RelationShipState.Pending && !r.FromSessionUser())

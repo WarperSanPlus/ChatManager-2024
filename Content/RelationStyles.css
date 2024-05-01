@@ -71,6 +71,7 @@ h2 {
 
 #search-criterias {
     font-size: 1.5em;
+    user-select: none;
 }
 
 #search-criterias > *:not(:first-child){

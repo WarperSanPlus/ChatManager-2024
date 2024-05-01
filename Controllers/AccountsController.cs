@@ -305,6 +305,20 @@ namespace Controllers
             return this.View(currentUser);
         }
 
+        [OnlineUsers.AdminAccess]
+        public ActionResult Edit(int userId)
+        {
+            var userToEdit = UsersRepository.GetUser(userId).Clone();
+
+            if (userToEdit == null || userToEdit.IsAdmin)
+                return null;
+
+            this.ViewBag.Genders = new SelectList(DB.GetRepo<Gender>().ToList(), "Id", "Name", userToEdit.GenderId);
+            this.Session["UnchangedPasswordCode"] = Guid.NewGuid().ToString().Substring(0, 12);
+            userToEdit.Password = userToEdit.ConfirmPassword = (string)this.Session["UnchangedPasswordCode"];
+            return this.View(userToEdit);
+        }
+
         #endregion Profil
 
         #region Login and Logout
