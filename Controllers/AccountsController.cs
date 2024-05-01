@@ -312,7 +312,7 @@ namespace Controllers
 
             if (userToEdit == null || userToEdit.IsAdmin)
                 return null;
-
+            //
             this.ViewBag.Genders = new SelectList(DB.GetRepo<Gender>().ToList(), "Id", "Name", userToEdit.GenderId);
             this.Session["UnchangedPasswordCode"] = Guid.NewGuid().ToString().Substring(0, 12);
             userToEdit.Password = userToEdit.ConfirmPassword = (string)this.Session["UnchangedPasswordCode"];
