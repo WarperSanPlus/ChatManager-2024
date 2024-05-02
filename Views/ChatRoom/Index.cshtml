@@ -49,6 +49,17 @@
             currentId = undefined;
 
         initTimeout(300);
+        $.fn.bindFirst = function (events, fn) {
+            let elem, handlers, i, _len;
+            this.on(events, fn);
+            for (i = 0, _len = this.length; i < _len; i++) {
+                elem = this[i];
+                events.split(' ').forEach(function (event) {
+                    handlers = jQuery._data(elem).events[event.split('.')[0]];
+                    handlers.unshift(handlers.pop());
+                })
+            }
+        };
 
         /* MESSAGES PR */
         function scrollToEnd(time) {
@@ -66,7 +77,10 @@
                 allowScroll = false;
             }
 
-            $(".chat-message").click(function () { startEdit($(this)[0]); });
+            $(".chat-message").bindFirst("click", function (e) {
+                startEdit($(this)[0]);
+                e?.preventDefault();
+            });
         };
 
         let messages = new PartialRefresh("@Url.Action("GetMessages")", "ChatMessagesContainer", 1, onMessageRefresh, currentId != undefined);
@@ -260,11 +274,11 @@
             e.append(send);
 
             // Cancel
-            let cancel = document.createElement("i");
-            cancel.classList.add("fa-solid", "fa-x");
-            cancel.addEventListener("click", function () {
+            let deleteM = document.createElement("i");
+            deleteM.classList.add("fa-solid", "fa-x");
+            deleteM.addEventListener("click", function () {
                 bootbox.confirm({
-                    message: "Voulez-vous vraiment annuler les modifications?",
+                    message: "Voulez-vous vraiment supprimer ce message?",
                     buttons: {
                         confirm: {
                             label: 'Oui',
@@ -278,12 +292,12 @@
                     callback: function (result) {
 
                         if (result)
-                            cancelEdit();
+                            submitEdit(null);
                     }
                 });
             });
-            cancel.title = "Annuler les modifications";
-            e.append(cancel);
+            deleteM.title = "Supprimer le message";
+            e.append(deleteM);
 
             e.style.display = "none";
             e.id = "chat-message-editor";

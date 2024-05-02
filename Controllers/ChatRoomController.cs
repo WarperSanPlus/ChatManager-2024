@@ -124,8 +124,10 @@ namespace Controllers
             if (!adminDelete && message.IdSender != currentUser.Id)
                 return null;
 
+            content = content ?? "";
+
             // Delete message
-            if (adminDelete || content == null)
+            if (adminDelete || content.Trim().Length == 0)
             {
                 _ = messageRepo.Delete(id.Value);
                 return null;
