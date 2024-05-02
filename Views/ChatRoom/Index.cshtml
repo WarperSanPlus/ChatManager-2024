@@ -18,10 +18,17 @@
 <div id="ChatRoomContainer">
     <div id="OnlineFriendsContainer"><!-- FRIENDS --></div>
     <div id="ChatBoxContainer">
-        <div>
-            <!-- CHAT BOX HEADER -->
+        <div id="ChatHeaderContainer">
+            <p>Conversation avec</p>
+            <div id="chat-header">
+                <div id="chat-header-image"></div>
+                <span id="chat-header-name"></span>
+            </div>
         </div>
         <div id="ChatMessagesContainer"><!-- MESSAGES --></div>
+        <div id="ChatEmpty">
+            <p>Aucune conversation sélectionnée</p>
+        </div>
     </div>
     <div id="ChatInputContainer">
         <div id="chat-message-form">
@@ -58,6 +65,8 @@
                 scrollToEnd(0);
                 allowScroll = false;
             }
+
+            $(".chat-message").click(function () { startEdit($(this)[0]); });
         };
 
         let messages = new PartialRefresh("@Url.Action("GetMessages")", "ChatMessagesContainer", 1, onMessageRefresh, currentId != undefined);
@@ -66,12 +75,28 @@
     <script defer>
         let firstTime = true;
 
+        function toggleChat(visible) {
+            if (visible) {
+                $("#ChatHeaderContainer").css("display", "initial");
+                $("#ChatMessagesContainer").css("display", "initial");
+                $("#ChatEmpty").css("display", "none");
+            }
+            else {
+                $("#ChatHeaderContainer").css("display", "none");
+                $("#ChatMessagesContainer").css("display", "none");
+                $("#ChatEmpty").css("display", "");
+            }
+        };
+        toggleChat(false);
+
         /* FRIENDS PR */
         let onFriendsRefresh = function () {
             $(".chat-friend").click(function () {
                 allowScroll = true;
                 let isSelected = $(this).hasClass("selected");
                 let userId = isSelected ? undefined : $(this).data("id");
+                let userName = isSelected ? undefined : $(this).data("name");
+                let userImage = isSelected ? undefined : $(this).data("image");
 
                 currentId = userId;
 
@@ -82,11 +107,15 @@
                 messages.refresh(true);
 
                 // Update select
-                if (firstTime)
+                if (!firstTime)
                     $(".chat-friend").removeClass("selected");
 
-                if (!isSelected)
+                if (!isSelected) {
+                    $("#chat-header-image").css("background-image", "url('" + userImage + "')");
+                    $("#chat-header-name").text(userName);
                     $(this).addClass("selected");
+                }
+                toggleChat(!isSelected);
             });
 
             var select = $('.chat-friend[data-id="' + currentId + '"]');
@@ -128,6 +157,140 @@
         };
 
         $("#chat-message-submit").click(sendMessage);
+    </script>
+
+    <script defer>
+        let elementModified = undefined;
+
+        function startEdit(element) {
+            if (elementModified != undefined)
+                cancelEdit();
+
+            elementModified = element;
+
+            if (elementModified == undefined)
+                return;
+
+            let parent = document.getElementById(elementModified.id)?.parentNode;
+
+            if (parent == undefined)
+                return;
+
+            // Setup editor
+            let editor = setEditor(elementModified.dataset["id"], elementModified.dataset["content"]);
+
+            // Move editor
+            parent.insertBefore(editor, elementModified);
+
+            // Hide element
+            elementModified.style.display = "none";
+
+            // Stop refresh
+            messages.pause();
+        };
+
+        function cancelEdit() {
+            let editor = setEditor();
+
+            // Hide editor
+            editor.style.display = "none";
+
+            // Show element
+            if (elementModified != undefined)
+                elementModified.style.display = "";
+
+            // Continue refresh
+            messages.restart();
+        };
+        function submitEdit(content = "") {
+            if (elementModified == undefined)
+                return;
+
+            let id = elementModified.dataset["id"];
+
+            if (content == "")
+                content = $("#chat-editor-input").val();
+
+            messages.commandPost("@Url.Action("ModifyMessage")", {
+                id: id,
+                content: content,
+            });
+            cancelEdit();
+        };
+
+        function setEditor(id, content) {
+            let editor = document.getElementById("chat-message-editor") ?? createEditor();
+
+            // Set id
+            editor.dataset["id"] = id;
+
+            // Set content
+            document.getElementById("chat-editor-input").value = content;
+
+            // Show editor
+            editor.style.display = "";
+
+            return editor;
+        };
+
+        function createEditor() {
+            let e = document.createElement("div");
+
+            // Input
+            let input = document.createElement("input");
+            input.type = "text";
+
+            input.id = "chat-editor-input";
+            input.addEventListener("keydown", function (event) {
+                if (event.key === "Escape")
+                    cancelEdit();
+
+                if (event.key === "Enter")
+                    submitEdit();
+            });
+            e.append(input);
+
+            // Send
+            let send = document.createElement("i");
+            send.classList.add("fa-solid", "fa-check");
+            send.addEventListener("click", function () {
+                submitEdit(undefined);
+            });
+            send.title = "Confirmer les modifications";
+            e.append(send);
+
+            // Cancel
+            let cancel = document.createElement("i");
+            cancel.classList.add("fa-solid", "fa-x");
+            cancel.addEventListener("click", function () {
+                bootbox.confirm({
+                    message: "Voulez-vous vraiment annuler les modifications?",
+                    buttons: {
+                        confirm: {
+                            label: 'Oui',
+                            className: 'btn-success'
+                        },
+                        cancel: {
+                            label: 'Non',
+                            className: 'btn-danger'
+                        }
+                    },
+                    callback: function (result) {
+
+                        if (result)
+                            cancelEdit();
+                    }
+                });
+            });
+            cancel.title = "Annuler les modifications";
+            e.append(cancel);
+
+            e.style.display = "none";
+            e.id = "chat-message-editor";
+            document.body.append(e);
+            return document.getElementById("chat-message-editor");
+        };
+
     </script>
 }
 

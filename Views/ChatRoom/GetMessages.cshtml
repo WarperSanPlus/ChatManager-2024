@@ -5,10 +5,11 @@
 
 @foreach (var message in Model)
 {
+    var id = message.Id;
     var content = message.Content;
     var fromLocal = message.FromSessionUser();
     var messageClass = fromLocal ? "own" : "other";
-    var date = message.SentAt.ToString("H:m:s");
+    var date = message.SentAt.ToString("HH:mm:ss");
     var title = fromLocal ? "Envoyé à " + date : "Reçu à " + date;
 
     if (!lastDate.HasValue || (message.SentAt - lastDate.Value).TotalMinutes >= 30)
@@ -22,7 +23,12 @@
         </div>
     }
 
-    <div class="chat-message @messageClass" title="@title">
+    <div 
+         id="message-@id" 
+         class="chat-message @messageClass" 
+         title="@title" 
+         data-id="@id" 
+         data-content="@content">
         @Helper.ParseContent(content)
     </div>
 }

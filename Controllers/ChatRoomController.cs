@@ -74,7 +74,7 @@ namespace Controllers
         {
             content = content ?? string.Empty;
             content = content.Trim();
-            if (content.Length == 0 || !userId.HasValue)
+            if (content.Length == 0 || !userId.HasValue)
                 return null;
 
             var userRepo = UsersRepository.Instance;
@@ -88,7 +88,7 @@ namespace Controllers
             var relation = RelationShipRepository.Instance.GetRelationShip(currentUser.Id, userId.Value);
 
             // Check if friend
-            if (relation == null || relation.State != RelationShipState.Accepted)
+            if (relation == null || relation.State != RelationShipState.Accepted)
                 return null;
 
             _ = MessageRepository.Instance.Add(new Message()
@@ -101,6 +101,38 @@ namespace Controllers
 
             // If the receiver isn't looking at the chat
             OnlineUsers.AddNotification(userId.Value, "Vous avez reçu un message de " + currentUser.GetFullName());
+
+            return null;
+        }
+
+        public JsonResult ModifyMessage(int? id = null, string content = null)
+        {
+            if (!id.HasValue)
+                return null;
+
+            // Check if message exists
+            var messageRepo = MessageRepository.Instance;
+            var message = messageRepo.Get(id.Value);
+
+            if (message == null)
+                return null;
+
+            // Check if message from local
+            var currentUser = OnlineUsers.GetSessionUser();
+            var adminDelete = currentUser.IsAdmin && message.IdSender != currentUser.Id;
+
+            if (!adminDelete && message.IdSender != currentUser.Id)
+                return null;
+
+            // Delete message
+            if (adminDelete || content == null)
+            {
+                _ = messageRepo.Delete(id.Value);
+                return null;
+            }
+
+            message.Content = content.Trim();
+            _ = messageRepo.Update(message);
 
             return null;
         }
