@@ -1,5 +1,6 @@
 ﻿using Models;
 using Repositories;
+using System.Diagnostics;
 using System.Linq;
 using System.Web.Mvc;
 
@@ -9,7 +10,13 @@ namespace Controllers
     public class ChatRoomController : Controller
     {
         // GET: ChatRoom
-        public ActionResult Index() => this.View();
+        public ActionResult Index()
+        {
+            var currentUser = OnlineUsers.GetSessionUser();
+            this.ViewBag.CurrentChat = this.HttpContext.Cache["CurrentChat" + currentUser.Id];
+
+            return this.View();
+        }
 
         public ActionResult GetOnlineFriends(bool forceRefresh = false)
         {
@@ -41,46 +48,44 @@ namespace Controllers
         {
             var messageRepo = MessageRepository.Instance;
             var userRepo = UsersRepository.Instance;
+            var currentUser = OnlineUsers.GetSessionUser();
 
-            if (!forceRefresh && !userRepo.HasChanged && !messageRepo.HasChanged && !RelationShipRepository.Instance.HasChanged)
+            this.HttpContext.Cache["CurrentChat" + currentUser.Id] = userId ?? -1;
+
+            if (!forceRefresh && !messageRepo.HasChanged && !userRepo.HasChanged && !RelationShipRepository.Instance.HasChanged)
                 return null;
+
+            Debug.WriteLine(currentUser.GetFullName());
 
             // Check if user exists
             if (!userId.HasValue || userRepo.Get(userId.Value) == null)
                 return null;
 
-            var currentUser = OnlineUsers.GetSessionUser();
-
             // Get messages
             var messages = messageRepo
                 .ToList()
                 .Where(m => m.IsUserRelated(currentUser.Id) && m.IsUserRelated(userId.Value))
-                .OrderBy(m => m.SentAt)
-                .GroupBy(m =>
-                {
-                    var date = m.SentAt;
-                    return ((date.Hour * 60) + date.Minute) / 30;
-                });
+                .OrderBy(m => m.SentAt);
 
             return this.PartialView(messages);
         }
 
-        public JsonResult AddMessage(int userId, string content)
+        public JsonResult AddMessage(int? userId = null, string content = null)
         {
             content = content ?? string.Empty;
             content = content.Trim();
-            if (content.Length == 0)
+            if (content.Length == 0 || !userId.HasValue)
                 return null;
 
             var userRepo = UsersRepository.Instance;
 
             // Check if user exists
-            if (userRepo.Get(userId) == null)
+            if (userRepo.Get(userId.Value) == null)
                 return null;
 
             var currentUser = OnlineUsers.GetSessionUser();
 
-            var relation = RelationShipRepository.Instance.GetRelationShip(currentUser.Id, userId);
+            var relation = RelationShipRepository.Instance.GetRelationShip(currentUser.Id, userId.Value);
 
             // Check if friend
             if (relation == null || relation.State != RelationShipState.Accepted)
@@ -89,10 +94,13 @@ namespace Controllers
             _ = MessageRepository.Instance.Add(new Message()
             {
                 IdSender = currentUser.Id,
-                IdReceiver = userId,
+                IdReceiver = userId.Value,
                 Content = content,
                 SentAt = System.DateTime.Now,
             });
+
+            // If the receiver isn't looking at the chat
+            OnlineUsers.AddNotification(userId.Value, "Vous avez reçu un message de " + currentUser.GetFullName());
 
             return null;
         }

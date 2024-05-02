@@ -1,20 +1,30 @@
-﻿@model IEnumerable<IGrouping<int, Models.Message>>
+﻿@model IEnumerable<Models.Message>
+@{ 
+    DateTime? lastDate = null;
+}
 
-@foreach (var group in Model)
+@foreach (var message in Model)
 {
-    @group.Key
-    foreach (var message in group)
-    {
-        var content = message.Content;
-        var fromLocal = message.FromSessionUser();
-        var messageClass = fromLocal ? "own" : "other";
-        var date = message.SentAt.ToString("H:m:s");
-        var title = fromLocal ? "Envoyé à " + date : "Reçu à " + date;
+    var content = message.Content;
+    var fromLocal = message.FromSessionUser();
+    var messageClass = fromLocal ? "own" : "other";
+    var date = message.SentAt.ToString("H:m:s");
+    var title = fromLocal ? "Envoyé à " + date : "Reçu à " + date;
 
-        <div class="chat-message @messageClass" title="@title">
-            @Helper.ParseContent(content)
+    if (!lastDate.HasValue || (message.SentAt - lastDate.Value).TotalMinutes >= 30)
+    {
+        lastDate = message.SentAt;
+        <div class="chat-message-dividier">
+            <span>
+                @lastDate.Value.ToString("dd MMMM yyyy - HH:mm")
+            </span>
+            <hr />
         </div>
     }
+
+    <div class="chat-message @messageClass" title="@title">
+        @Helper.ParseContent(content)
+    </div>
 }
 
 @if (Model.Count() == 0)

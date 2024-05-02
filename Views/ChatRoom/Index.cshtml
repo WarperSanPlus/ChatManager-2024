@@ -1,9 +1,11 @@
 ﻿@{
     ViewBag.Title = "Index";
 
+    int? selectId = ViewBag.CurrentChat;
     bool isAdmin = true;
 }
 
+<i id="currentId">@selectId</i>
 <div id="header-container">
     @if (isAdmin)
     {
@@ -19,13 +21,11 @@
         <div>
             <!-- CHAT BOX HEADER -->
         </div>
-        <div id="ChatMessagesContainer">
-            <!-- MESSAGES -->
-        </div>
+        <div id="ChatMessagesContainer"><!-- MESSAGES --></div>
     </div>
     <div id="ChatInputContainer">
         <div id="chat-message-form">
-            <input id="chat-message-input" type="text" placeholder="Tapez votre message ici ..." />
+            <input id="chat-message-input" type="text" placeholder="Tapez votre message ici ..." autocomplete="off" />
             <button id="chat-message-submit">
                 <i class="fa-solid fa-paper-plane" aria-hidden="true"></i>
             </button>
@@ -35,16 +35,46 @@
 
 @section Scripts {
     <script defer>
+        var allowScroll = true;
+        var currentId = $("#currentId").text();
+        $("#currentId").remove();
+        if (currentId == "")
+            currentId = undefined;
+
         initTimeout(300);
+
+        /* MESSAGES PR */
+        function scrollToEnd(time) {
+            let element = $("#ChatMessagesContainer>*:last-child")[0];
+
+            if (element == undefined)
+                return;
+
+            element.scrollIntoView(false);
+        }
+        let onMessageRefresh = function () {
+
+            if (allowScroll) {
+                scrollToEnd(0);
+                allowScroll = false;
+            }
+        };
+
+        let messages = new PartialRefresh("@Url.Action("GetMessages")", "ChatMessagesContainer", 1, onMessageRefresh, currentId != undefined);
+    </script>
+
+    <script defer>
+        let firstTime = true;
 
         /* FRIENDS PR */
         let onFriendsRefresh = function () {
             $(".chat-friend").click(function () {
+                allowScroll = true;
                 let isSelected = $(this).hasClass("selected");
                 let userId = isSelected ? undefined : $(this).data("id");
 
-                // Generate key
-                // Call ajax
+                currentId = userId;
+
                 // Update chat box
                 messages.replaceData({
                     userId: userId
@@ -52,23 +82,37 @@
                 messages.refresh(true);
 
                 // Update select
-                $(".chat-friend").removeClass("selected");
+                if (firstTime)
+                    $(".chat-friend").removeClass("selected");
 
                 if (!isSelected)
                     $(this).addClass("selected");
             });
+
+            var select = $('.chat-friend[data-id="' + currentId + '"]');
+            if (firstTime) {
+                select.click();
+                firstTime = false;
+            }
+            select.addClass("selected");
         };
 
-        let friends = new PartialRefresh("@Url.Action("GetOnlineFriends")", "OnlineFriendsContainer", 15, onFriendsRefresh, true);
+        let friends = new PartialRefresh("@Url.Action("GetOnlineFriends")", "OnlineFriendsContainer", 1, onFriendsRefresh, true);
+    </script>
 
-        /* MESSAGES PR */
-        let onMessageRefresh = function () {
-
-        };
+    <script defer>
         $("#chat-message-input").on("keydown", function (event) {
             if (event.key === 'Enter')
                 sendMessage();
+            if (event.key === "Escape") {
+                $(this).blur();
+                setMessageText("");
+            }
         });
+
+        function setMessageText(content) {
+            $("#chat-message-input").val(content);
+        }
 
         function sendMessage() {
             let content = $("#chat-message-input").val();
@@ -78,11 +122,11 @@
                 userId: userId,
                 content: content
             }, function () {
-                $("#chat-message-input").val("");
+                setMessageText("");
+                allowScroll = true;
             });
         };
 
-        let messages = new PartialRefresh("@Url.Action("GetMessages")", "ChatMessagesContainer", 1000, onMessageRefresh, false);
         $("#chat-message-submit").click(sendMessage);
     </script>
 }
