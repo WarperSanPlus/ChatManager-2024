@@ -52,10 +52,8 @@ namespace Controllers
 
             this.HttpContext.Cache["CurrentChat" + currentUser.Id] = userId ?? -1;
 
-            if (!forceRefresh && !messageRepo.HasChanged && !userRepo.HasChanged && !RelationShipRepository.Instance.HasChanged)
+            if (!forceRefresh && !messageRepo.HasUserNoticed(currentUser.Id) && !userRepo.HasChanged && !RelationShipRepository.Instance.HasChanged)
                 return null;
-
-            Debug.WriteLine(currentUser.GetFullName());
 
             // Check if user exists
             if (!userId.HasValue || userRepo.Get(userId.Value) == null)
@@ -98,6 +96,7 @@ namespace Controllers
                 Content = content,
                 SentAt = System.DateTime.Now,
             });
+            Debug.WriteLine("ADDED");
 
             // If the receiver isn't looking at the chat
             OnlineUsers.AddNotification(userId.Value, "Vous avez reçu un message de " + currentUser.GetFullName());

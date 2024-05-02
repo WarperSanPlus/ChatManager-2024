@@ -42,11 +42,24 @@
 
 @section Scripts {
     <script defer>
+        /* MESSAGES */
         var allowScroll = true;
         var currentId = $("#currentId").text();
         $("#currentId").remove();
         if (currentId == "")
             currentId = undefined;
+
+        var isCtrlHeld = false;
+        document.addEventListener("keyup", event => {
+            if (event.key === "Control") {
+                isCtrlHeld = false;
+            }
+        }); 
+        document.addEventListener("keydown", event => {
+            if (event.key === "Control") {
+                isCtrlHeld = true;
+            }
+        }); 
 
         initTimeout(300);
         $.fn.bindFirst = function (events, fn) {
@@ -61,7 +74,6 @@
             }
         };
 
-        /* MESSAGES PR */
         function scrollToEnd(time) {
             let element = $("#ChatMessagesContainer>*:last-child")[0];
 
@@ -72,21 +84,24 @@
         }
         let onMessageRefresh = function () {
 
-            if (allowScroll) {
+            if (allowScroll)
                 scrollToEnd(0);
-                allowScroll = false;
-            }
 
             $(".chat-message").bindFirst("click", function (e) {
+                // Disable edit if control is held
+                if (isCtrlHeld || !$(this).hasClass("own"))
+                    return;
+
                 startEdit($(this)[0]);
                 e?.preventDefault();
             });
         };
 
-        let messages = new PartialRefresh("@Url.Action("GetMessages")", "ChatMessagesContainer", 1, onMessageRefresh, currentId != undefined);
+        let messages = new PartialRefresh("@Url.Action("GetMessages")", "ChatMessagesContainer", 5, onMessageRefresh, currentId != undefined);
     </script>
 
     <script defer>
+        /* FRIENDS */
         let firstTime = true;
 
         function toggleChat(visible) {
@@ -103,7 +118,6 @@
         };
         toggleChat(false);
 
-        /* FRIENDS PR */
         let onFriendsRefresh = function () {
             $(".chat-friend").click(function () {
                 allowScroll = true;
@@ -140,10 +154,11 @@
             select.addClass("selected");
         };
 
-        let friends = new PartialRefresh("@Url.Action("GetOnlineFriends")", "OnlineFriendsContainer", 1, onFriendsRefresh, true);
+        let friends = new PartialRefresh("@Url.Action("GetOnlineFriends")", "OnlineFriendsContainer", 15, onFriendsRefresh, true);
     </script>
 
     <script defer>
+        /* CHAT INPUT */
         $("#chat-message-input").on("keydown", function (event) {
             if (event.key === 'Enter')
                 sendMessage();
@@ -174,6 +189,7 @@
     </script>
 
     <script defer>
+        /* EDITOR */
         let elementModified = undefined;
 
         function startEdit(element) {
