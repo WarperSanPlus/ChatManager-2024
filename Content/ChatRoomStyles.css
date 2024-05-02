@@ -188,6 +188,10 @@
     align-items: center;
 }
 
+#message-empty {
+    margin-top: 2em;
+}
+
 /* EDITOR */
 #chat-message-editor {
     background-color: transparent;
