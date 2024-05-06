@@ -16,6 +16,9 @@ namespace Controllers
         public JsonResult EmailAvailable(string email)
         {
             var user = OnlineUsers.GetSessionUser();
+            if (user != null && user.IsAdmin)
+                return this.Json(true);
+
             var excludedId = user?.Id ?? 0;
             return this.Json(UsersRepository.Instance.EmailAvailable(email, excludedId));
         }
@@ -308,15 +311,44 @@ namespace Controllers
         [OnlineUsers.AdminAccess]
         public ActionResult Edit(int userId)
         {
-            var userToEdit = UsersRepository.GetUser(userId).Clone();
+            var userToEdit = UsersRepository.GetUser(userId);
 
-            if (userToEdit == null || userToEdit.IsAdmin)
+            if (userToEdit == null)
                 return null;
             //
             this.ViewBag.Genders = new SelectList(DB.GetRepo<Gender>().ToList(), "Id", "Name", userToEdit.GenderId);
             this.Session["UnchangedPasswordCode"] = Guid.NewGuid().ToString().Substring(0, 12);
+            this.Session["IDsessModif"] = userId;
             userToEdit.Password = userToEdit.ConfirmPassword = (string)this.Session["UnchangedPasswordCode"];
             return this.View(userToEdit);
+        }
+        [OnlineUsers.AdminAccess]
+        [HttpPost]
+        [ValidateAntiForgeryToken()]
+        public ActionResult Edit(User user)
+        {
+            var newEmail = "";
+            if (this.ModelState.IsValid)
+            {
+                if (user.Password == (string)this.Session["UnchangedPasswordCode"])
+                    user.Password = user.ConfirmPassword = user.Password;
+
+                user.Id = (int)this.Session["IDsessModif"];
+
+
+                if (UsersRepository.Instance.Update(user))
+                {
+                    if (newEmail == "")
+                        return Edit(user.Id);
+                    //return this.Redirect((string)this.Session["LastAction"]);
+
+                    this.SendEmailChangedVerification(user, newEmail);
+                    return this.RedirectToAction("EmailChangedAlert");
+                }
+            }
+
+            this.ViewBag.Genders = new SelectList(DB.GetRepo<Gender>().ToList(), "Id", "Name", user.GenderId);
+            return this.View(user);
         }
 
         #endregion Profil
