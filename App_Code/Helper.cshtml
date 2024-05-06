@@ -193,7 +193,7 @@
     var iconUrl = Url.Content(icon);
 <img src="@iconUrl" class="UserSmallAvatar" title="@tooltip" />
 }
-@helper ParseContent(string content)
+@helper ParseContent(string content, bool shortText = false)
 {
     string[] tokens = content.Split(' ');
     foreach (var token in tokens)
@@ -229,12 +229,17 @@
                 }
                 else
                 {
-                    if (token.Contains("https://www.youtube.com/watch?v="))
+                    if (token.Contains("https://www.youtube.com/watch?v=") || token.Contains("https://youtu.be/"))
                     {
                         string youtubeId = token.Replace("https://www.youtube.com/watch?v=", "");
+                        youtubeId = youtubeId.Replace("https://youtu.be/", "");
                         if (youtubeId.IndexOf("&") > -1)
                         {
                             youtubeId = youtubeId.Substring(0, youtubeId.IndexOf("&"));
+                        }
+                        if (youtubeId.IndexOf("?") > -1)
+                        {
+                            youtubeId = youtubeId.Substring(0, youtubeId.IndexOf("?"));
                         }
                         string youtubeThumbnail = "https://i3.ytimg.com/vi/" + youtubeId + "/maxresdefault.jpg";
 <br />
@@ -265,7 +270,7 @@
             else
             {
                 string subtoken = token;
-                if (token.Length > 28)
+                if (token.Length > 28 && shortText)
                 {
                     subtoken = token.Substring(0, 28) + "...";
 <span class="token" title="@token">@subtoken</span>

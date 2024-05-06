@@ -1,5 +1,329 @@
 ﻿@{
     ViewBag.Title = "Index";
+
+    int? selectId = ViewBag.CurrentChat;
+    bool isAdmin = true;
 }
 
-<h2>Salle de clavardage</h2>
+<i id="currentId">@selectId</i>
+<div id="header-container">
+    @if (isAdmin)
+    {
+        @Helper.ImageCmd("ChatRoom", "", "~/Content/UI-Icons/chatRoom.png", "UserSmallAvatar", "Modérer les messages");
+    }
+    <h2>Salle de discussions</h2>
+</div>
+<hr />
+
+<div id="ChatRoomContainer">
+    <div id="OnlineFriendsContainer"><!-- FRIENDS --></div>
+    <div id="ChatBoxContainer">
+        <div id="ChatHeaderContainer">
+            <p>Conversation avec</p>
+            <div id="chat-header">
+                <div id="chat-header-image"></div>
+                <span id="chat-header-name"></span>
+            </div>
+        </div>
+        <div id="ChatMessagesContainer"><!-- MESSAGES --></div>
+        <div id="ChatEmpty">
+            <p>Aucune conversation sélectionnée</p>
+        </div>
+    </div>
+    <div id="ChatInputContainer">
+        <div id="chat-message-form">
+            <input id="chat-message-input" type="text" placeholder="Tapez votre message ici ..." autocomplete="off" />
+            <button id="chat-message-submit">
+                <i class="fa-solid fa-paper-plane" aria-hidden="true"></i>
+            </button>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script defer>
+        /* MESSAGES */
+        var allowScroll = true;
+        var currentId = $("#currentId").text();
+        $("#currentId").remove();
+        if (currentId == "")
+            currentId = undefined;
+
+        var isCtrlHeld = false;
+        document.addEventListener("keyup", event => {
+            if (event.key === "Control") {
+                isCtrlHeld = false;
+            }
+        }); 
+        document.addEventListener("keydown", event => {
+            if (event.key === "Control") {
+                isCtrlHeld = true;
+            }
+        }); 
+
+        initTimeout(300);
+        $.fn.bindFirst = function (events, fn) {
+            let elem, handlers, i, _len;
+            this.on(events, fn);
+            for (i = 0, _len = this.length; i < _len; i++) {
+                elem = this[i];
+                events.split(' ').forEach(function (event) {
+                    handlers = jQuery._data(elem).events[event.split('.')[0]];
+                    handlers.unshift(handlers.pop());
+                })
+            }
+        };
+
+        function scrollToEnd(time) {
+            let element = $("#ChatMessagesContainer>*:last-child")[0];
+
+            if (element == undefined)
+                return;
+
+            element.scrollIntoView(false);
+        }
+        let onMessageRefresh = function () {
+
+            if (allowScroll)
+                scrollToEnd(0);
+
+            $(".chat-message").bindFirst("click", function (e) {
+                // Disable edit if control is held
+                if (isCtrlHeld || !$(this).hasClass("own"))
+                    return;
+
+                startEdit($(this)[0]);
+                e?.preventDefault();
+            });
+        };
+
+        let messages = new PartialRefresh("@Url.Action("GetMessages")", "ChatMessagesContainer", 5, onMessageRefresh, currentId != undefined);
+    </script>
+
+    <script defer>
+        /* FRIENDS */
+        let firstTime = true;
+
+        function toggleChat(visible) {
+            if (visible) {
+                $("#ChatHeaderContainer").css("display", "initial");
+                $("#ChatMessagesContainer").css("display", "initial");
+                $("#ChatEmpty").css("display", "none");
+            }
+            else {
+                $("#ChatHeaderContainer").css("display", "none");
+                $("#ChatMessagesContainer").css("display", "none");
+                $("#ChatEmpty").css("display", "");
+            }
+        };
+        toggleChat(false);
+
+        let onFriendsRefresh = function () {
+            $(".chat-friend").click(function () {
+                allowScroll = true;
+                let isSelected = $(this).hasClass("selected");
+                let userId = isSelected ? undefined : $(this).data("id");
+                let userName = isSelected ? undefined : $(this).data("name");
+                let userImage = isSelected ? undefined : $(this).data("image");
+
+                currentId = userId;
+
+                // Update chat box
+                messages.replaceData({
+                    userId: userId
+                });
+                messages.refresh(true);
+
+                // Update select
+                if (!firstTime)
+                    $(".chat-friend").removeClass("selected");
+
+                if (!isSelected) {
+                    $("#chat-header-image").css("background-image", "url('" + userImage + "')");
+                    $("#chat-header-name").text(userName);
+                    $(this).addClass("selected");
+                }
+                toggleChat(!isSelected);
+            });
+
+            var select = $('.chat-friend[data-id="' + currentId + '"]');
+            if (firstTime) {
+                select.click();
+                firstTime = false;
+            }
+            select.addClass("selected");
+        };
+
+        let friends = new PartialRefresh("@Url.Action("GetOnlineFriends")", "OnlineFriendsContainer", 15, onFriendsRefresh, true);
+    </script>
+
+    <script defer>
+        /* CHAT INPUT */
+        $("#chat-message-input").on("keydown", function (event) {
+            if (event.key === 'Enter')
+                sendMessage();
+            if (event.key === "Escape") {
+                $(this).blur();
+                setMessageText("");
+            }
+        });
+
+        function setMessageText(content) {
+            $("#chat-message-input").val(content);
+        }
+
+        function sendMessage() {
+            let content = $("#chat-message-input").val();
+            let userId = $(".chat-friend:is(.selected)").data("id");
+
+            messages.commandPost("@Url.Action("AddMessage")", {
+                userId: userId,
+                content: content
+            }, function () {
+                setMessageText("");
+                allowScroll = true;
+            });
+        };
+
+        $("#chat-message-submit").click(sendMessage);
+    </script>
+
+    <script defer>
+        /* EDITOR */
+        let elementModified = undefined;
+
+        function startEdit(element) {
+            if (elementModified != undefined)
+                cancelEdit();
+
+            elementModified = element;
+
+            if (elementModified == undefined)
+                return;
+
+            let parent = document.getElementById(elementModified.id)?.parentNode;
+
+            if (parent == undefined)
+                return;
+
+            // Setup editor
+            let editor = setEditor(elementModified.dataset["id"], elementModified.dataset["content"]);
+
+            // Move editor
+            parent.insertBefore(editor, elementModified);
+
+            // Hide element
+            elementModified.style.display = "none";
+
+            // Stop refresh
+            messages.pause();
+        };
+
+        function cancelEdit() {
+            let editor = setEditor();
+
+            // Hide editor
+            editor.style.display = "none";
+
+            // Show element
+            if (elementModified != undefined)
+                elementModified.style.display = "";
+
+            // Continue refresh
+            messages.restart();
+        };
+        function submitEdit(content = "") {
+            if (elementModified == undefined)
+                return;
+
+            let id = elementModified.dataset["id"];
+
+            if (content == "")
+                content = $("#chat-editor-input").val();
+
+            messages.commandPost("@Url.Action("ModifyMessage")", {
+                id: id,
+                content: content,
+            });
+            cancelEdit();
+        };
+
+        function setEditor(id, content) {
+            let editor = document.getElementById("chat-message-editor") ?? createEditor();
+
+            // Set id
+            editor.dataset["id"] = id;
+
+            // Set content
+            document.getElementById("chat-editor-input").value = content;
+
+            // Show editor
+            editor.style.display = "";
+
+            return editor;
+        };
+
+        function createEditor() {
+            let e = document.createElement("div");
+
+            // Input
+            let input = document.createElement("input");
+            input.type = "text";
+
+            input.id = "chat-editor-input";
+            input.addEventListener("keydown", function (event) {
+                if (event.key === "Escape")
+                    cancelEdit();
+
+                if (event.key === "Enter")
+                    submitEdit();
+            });
+            e.append(input);
+
+            // Send
+            let send = document.createElement("i");
+            send.classList.add("fa-solid", "fa-check");
+            send.addEventListener("click", function () {
+                submitEdit(undefined);
+            });
+            send.title = "Confirmer les modifications";
+            e.append(send);
+
+            // Cancel
+            let deleteM = document.createElement("i");
+            deleteM.classList.add("fa-solid", "fa-x");
+            deleteM.addEventListener("click", function () {
+                bootbox.confirm({
+                    message: "Voulez-vous vraiment supprimer ce message?",
+                    buttons: {
+                        confirm: {
+                            label: 'Oui',
+                            className: 'btn-success'
+                        },
+                        cancel: {
+                            label: 'Non',
+                            className: 'btn-danger'
+                        }
+                    },
+                    callback: function (result) {
+
+                        if (result)
+                            submitEdit(null);
+                    }
+                });
+            });
+            deleteM.title = "Supprimer le message";
+            e.append(deleteM);
+
+            e.style.display = "none";
+            e.id = "chat-message-editor";
+            document.body.append(e);
+            return document.getElementById("chat-message-editor");
+        };
+
+    </script>
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/Content/ChatRoomStyles.css" />
+}
