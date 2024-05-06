@@ -5,7 +5,7 @@
     bool subscribing = Model.Id == 0;
     string pageTitle = subscribing ? "Inscription" : "Profil";
     string formSubmitCaption = subscribing ? "S'inscrire" : "Enregistrer";
-    SelectList liste =  new SelectList(Repositories.DB.GetRepo<Models.UserType>().ToList());
+    SelectList liste =  new SelectList(Repositories.DB.GetRepo<Models.UserType>().ToList(),"Id","Name", Model.UserTypeId);
     bool verifier = Model.Verified;
     bool bloquer = Model.Blocked;
 }
@@ -34,21 +34,32 @@
     </fieldset>
     <fieldset>
         <div class="legend">@Html.DisplayNameFor(model => model.UserType)</div>
-        @Html.RadioButtonsGroupFor(model => model.UserType, liste)
+        @Html.RadioButtonsGroupFor(model => model.UserTypeId, liste)
         @Html.ValidationMessageFor(model => model.UserType, "", new { @class = "text-danger" })
     </fieldset>
     <fieldset>
         <div style="display:grid; align-items:center; grid-template-columns:auto 80px;">
-            <div class="legend">
-                @Html.DisplayNameFor(model => model.UserType)
-            </div>
+         
             <div>
-
                 <label for="Verifié">Verifié</label>
-                <input type="checkbox" name="Verifié" id="verif" value="@verifier" style="margin-top:-5px;" />
-                <label for="Bloqué">Bloqué</label>
-                <input type="checkbox" name="Bloqué" id="bloque" value="on" style="margin-top:-5px;" />
+                @if (verifier)
+                {
+                    <input type="checkbox" name="Verified" checked id="Verified" style="margin-top: -5px;" />
 
+                }
+                else
+                {
+                    <input type="checkbox" name="Verified"  id="Verified" style="margin-top: -5px;" />
+                }
+                <label for="Bloqué">Bloqué</label>
+                @if (bloquer)
+                {
+                    <input type="checkbox" name="Blocked" id="Blocked" checked style="margin-top: -5px;" />
+                }
+                else
+                {
+                    <input type="checkbox" name="Blocked" id="Blocked" style="margin-top: -5px;" />
+                }
             </div>
         </div>
        
