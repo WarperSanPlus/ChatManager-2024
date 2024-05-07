@@ -139,5 +139,21 @@ namespace Controllers
         }
 
         #endregion
+        //ModerationCommentaire
+        #region Moderation
+
+
+        [OnlineUsers.AdminAccess]
+        public ActionResult ModerationCommentaire()
+        {
+
+
+            return this.View();
+        }
+
+
+
+
+        #endregion
     }
 }

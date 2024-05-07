@@ -278,6 +278,8 @@
     <Content Include="Views\Accounts\Edit.cshtml" />
     <Content Include="Views\ChatRoom\GetOnlineFriends.cshtml" />
     <Content Include="Views\ChatRoom\GetMessages.cshtml" />
+    <Content Include="Views\ChatRoom\ModerationCommentaire.cshtml" />
+    <Content Include="Views\ChatRoom\EntrerMessageModeration.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Views\Notifications\" />

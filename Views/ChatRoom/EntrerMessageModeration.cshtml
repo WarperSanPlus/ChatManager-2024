@@ -1,0 +1,22 @@
+@model IEnumerable<Models.Message>
+
+@foreach (var Message in Model)
+{
+    var id = Message.Id;
+    var IdSender = Message.IdSender;
+    var IdReceiver = Message.IdReceiver;
+    var Content = Message.Content;
+    var dateDenvoy = Message.SentAt;
+ 
+
+}
+
+
+[
+  {
+    "Id": 1,
+    "IdSender": 1,
+    "IdReceiver": 3,
+    "Content": "allo",
+    "SentAt": "2024-05-07T19:31:54.8194412-04:00"
+  },
