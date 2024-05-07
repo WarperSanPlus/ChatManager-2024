@@ -334,6 +334,11 @@ namespace Controllers
             if (this.ModelState.IsValid && oldUser != null)
             {
                 user.Id = id;
+               
+                if(oldUser.UserTypeId == 1)
+                {
+                    user.UserTypeId = oldUser.UserTypeId;
+                }
                 user.Password = user.ConfirmPassword = oldUser.Password;
                 user.GenderId = oldUser.GenderId;
 

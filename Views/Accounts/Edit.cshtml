@@ -32,11 +32,17 @@
         @Html.EditorFor(model => model.ConfirmEmail, new { htmlAttributes = new { @class = "form-control", placeholder = @Html.DisplayNameFor(model => model.ConfirmEmail) } })
         @Html.ValidationMessageFor(model => model.ConfirmEmail, "", new { @class = "text-danger" })
     </fieldset>
-    <fieldset>
-        <div class="legend">@Html.DisplayNameFor(model => model.UserType)</div>
-        @Html.RadioButtonsGroupFor(model => model.UserTypeId, liste)
-        @Html.ValidationMessageFor(model => model.UserType, "", new { @class = "text-danger" })
-    </fieldset>
+    @{
+        if (Model.UserTypeId != 1)
+        {
+            <fieldset>
+                <div class="legend">@Html.DisplayNameFor(model => model.UserType)</div>
+                @Html.RadioButtonsGroupFor(model => model.UserTypeId, liste)
+                @Html.ValidationMessageFor(model => model.UserType, "", new { @class = "text-danger" })
+            </fieldset>
+        }
+    }
+
     <fieldset>
         <div style="display:grid; align-items:center; grid-template-columns:auto 80px;">
             <div>
@@ -44,7 +50,7 @@
                 @Html.CheckBoxFor(model => model.Verified)
 
                 @Html.LabelFor(model => model.Blocked)
-                @Html.CheckBoxFor(model => model.Blocked)
+                @Html.CheckBoxFor(model => model.Blocked)
             </div>
         </div>
 
