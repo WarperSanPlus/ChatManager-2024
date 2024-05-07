@@ -65,6 +65,7 @@ namespace Models
         public Gender Gender => DB.GetRepo<Gender>().Get(this.GenderId);
 
         [JsonIgnore]
+        [Display(Name = "Type d'utilisateur")]
         public UserType UserType => DB.GetRepo<UserType>().Get(this.UserTypeId);
 
         [JsonIgnore]
@@ -75,11 +76,8 @@ namespace Models
 
         public string GetFullName(bool showGender = false)
         {
-            if (showGender)
-            {
-                if (this.Gender.Name != "Neutre")
-                    return this.Gender.Name + " " + this.LastName;
-            }
+            if (showGender && this.Gender != null && this.Gender.Name != "Neutre")
+                return this.Gender.Name + " " + this.LastName;
 
             return this.FirstName + " " + this.LastName;
         }

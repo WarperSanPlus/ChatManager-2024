@@ -39,31 +39,16 @@
     </fieldset>
     <fieldset>
         <div style="display:grid; align-items:center; grid-template-columns:auto 80px;">
-         
             <div>
-                <label for="Verifié">Verifié</label>
-                @if (verifier)
-                {
-                    <input type="checkbox" name="Verified" checked id="Verified" style="margin-top: -5px;" />
+                @Html.LabelFor(model => model.Verified)
+                @Html.CheckBoxFor(model => model.Verified)
 
-                }
-                else
-                {
-                    <input type="checkbox" name="Verified"  id="Verified" style="margin-top: -5px;" />
-                }
-                <label for="Bloqué">Bloqué</label>
-                @if (bloquer)
-                {
-                    <input type="checkbox" name="Blocked" id="Blocked" checked style="margin-top: -5px;" />
-                }
-                else
-                {
-                    <input type="checkbox" name="Blocked" id="Blocked" style="margin-top: -5px;" />
-                }
+                @Html.LabelFor(model => model.Blocked)
+                @Html.CheckBoxFor(model => model.Blocked)
             </div>
         </div>
-       
-      
+
+
     </fieldset>
     <fieldset>
         <div class="legend">@Html.DisplayNameFor(model => model.Avatar)</div>
@@ -71,7 +56,8 @@
         @Html.ValidationMessageFor(model => model.Avatar, "", new { @class = "text-danger" })
     </fieldset>
 
-
+    <input name="@Html.NameFor(model => model.Password)" value="@Model.Password" type="hidden" />
+    <input name="@Html.NameFor(model => model.ConfirmPassword)" value="@Model.ConfirmPassword" type="hidden" />
 
     <input type="submit" value="@formSubmitCaption" class="btn btn-default" />
     <hr />
