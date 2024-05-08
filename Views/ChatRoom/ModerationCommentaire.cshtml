@@ -2,20 +2,27 @@
     ViewBag.Title = "Moderation";
 }
 
-<h2>Moderation</h2>
+<h2>Modération</h2>
+<hr />
 
-<div id="ChatMessagesContainer"><!-- FRIENDS --></div>
-
+<div id="ChatMessagesContainer"><!-- MESSAGES --></div>
 
 @section Scripts {
     <script defer>
-        function EffacerCommentaire(targetUserId, targetUserName) {
-    popup(`Voulez-vous vraiment effacer ce commentaire ?`, function () {
-        relations.commandPost("@Url.Action("CreateRequest")", {
-            targetUserId: targetUserId
-        });
-    });
-};
+        let onMessageRefresh = () => {
+            $(".delete").click(function () {
+                EffacerCommentaire($(this).parent(".moderation-entry").data("id"));
+            });
+        };
+
+        function EffacerCommentaire(idMessage) {
+            popup(`Voulez-vous vraiment effacer ce message?`, function () {
+                messages.commandPost("@Url.Action("ModifyMessage")", {
+                    id: idMessage,
+                    content: null
+                });
+            });
+        };
 
         function popup(message, callback = null) {
             bootbox.confirm({
@@ -36,13 +43,13 @@
                         callback();
                 }
             });
-        }
-        let messages = new PartialRefresh("@Url.Action("EntrerMessageModeration")", "ChatMessagesContainer", 5);
+        };
 
-
+        let messages = new PartialRefresh("@Url.Action("EntrerMessageModeration")", "ChatMessagesContainer", 5, onMessageRefresh);
     </script>
 
 }
 @section Styles {
-    <link rel="stylesheet" href="~/Content/RelationStyles.css" />
+    <link rel="stylesheet" href="~/Content/ChatRoomStyles.css" />
+    <link rel="stylesheet" href="~/Content/ChatRoomModeration.css" />
 }

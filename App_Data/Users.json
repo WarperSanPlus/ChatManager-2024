@@ -7,7 +7,7 @@
     "FirstName": "Nicolas",
     "LastName": "Chourot",
     "GenderId": 1,
-    "Email": "nicolaschourot@videotron.ca",
+    "Email": "nicolaschourot@yopmail.com",
     "Avatar": "/Images_Data/User_Avatars/8f4fcab1-187c-4808-b1d6-f1138a7c0cd2.jpeg",
     "Password": "password",
     "CreationDate": "2024-03-14T11:46:53.6287006-04:00"
@@ -20,7 +20,7 @@
     "FirstName": "Nicolas",
     "LastName": "Chourot",
     "GenderId": 1,
-    "Email": "Nicolas.Chourot@clg.qc.ca",
+    "Email": "Nicolas.Chourot@yopmail.com",
     "Avatar": "/Images_Data/User_Avatars/dc030981-588c-4130-97f4-7f38fbee5db4.jpeg",
     "Password": "password",
     "CreationDate": "2024-03-15T09:24:40.6980116-04:00"
@@ -33,7 +33,7 @@
     "FirstName": "Saliha",
     "LastName": "Yacoub",
     "GenderId": 2,
-    "Email": "Saliha.Yacoub@clg.qc.ca",
+    "Email": "Saliha.Yacoub@yopmail.com",
     "Avatar": "/Images_Data/User_Avatars/4491ed49-2848-4618-b131-7036cb07126f.Jpeg",
     "Password": "password",
     "CreationDate": "2023-03-18T12:00:00"
@@ -85,7 +85,7 @@
     "FirstName": "Patrice",
     "LastName": "Roy",
     "GenderId": 1,
-    "Email": "Patrice.Roy@clg.qc.ca",
+    "Email": "Patrice.Roy@yopmail.com",
     "Avatar": "/Images_Data/User_Avatars/8e412968-fc77-41ee-849f-d9a7cbcdfb43.Jpeg",
     "Password": "password",
     "CreationDate": "2023-04-21T13:11:16"
@@ -98,7 +98,7 @@
     "FirstName": "Stéphane",
     "LastName": "Chassé",
     "GenderId": 2,
-    "Email": "Stephane.Chasse@clg.qc.ca",
+    "Email": "Stephane.Chasse@yopmail.com",
     "Avatar": "/Images_Data/User_Avatars/89ca9b58-9e3d-4c21-bb08-369f8f04b2fb.Jpeg",
     "Password": "password",
     "CreationDate": "2023-03-18T12:00:00"

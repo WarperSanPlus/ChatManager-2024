@@ -139,34 +139,26 @@ namespace Controllers
         }
 
         #endregion
-        //ModerationCommentaire
+
         #region Moderation
 
-
         [OnlineUsers.AdminAccess]
-        public ActionResult ModerationCommentaire()
-        {
-
-
-            return this.View();
-        }
+        public ActionResult ModerationCommentaire() => this.View();
 
 
         [OnlineUsers.AdminAccess]
-        public ActionResult EntrerMessageModeration()
+        public ActionResult EntrerMessageModeration(bool forceRefresh = false)
         {
+            var messageRepo = MessageRepository.Instance;
 
+            if (!forceRefresh && !messageRepo.HasChanged && !UsersRepository.Instance.HasChanged && !RelationShipRepository.Instance.HasChanged)
+                return null;
 
-            return this.View(Repositories.MessageRepository.Instance.ToList());
+            var messages = messageRepo.ToList().OrderByDescending(m => m.SentAt);
+
+            return this.PartialView(messages);
         }
-        [OnlineUsers.AdminAccess]
-        public ActionResult EffacerMessage(int IDMessage)
-        {
 
-          var LeRepo =  Repositories.MessageRepository.Instance;
-            LeRepo.Delete(IDMessage);
-            return null;
-        }
         #endregion
     }
 }

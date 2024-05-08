@@ -1,56 +1,31 @@
 @model IEnumerable<Models.Message>
 
-
-
-
-
-
-
-
-
-
-
 @foreach (var message in Model)
 {
     var id = message.Id;
-    var idSender = message.IdSender;
-    var idReceiver = message.IdReceiver;
     var content = message.Content;
-    var dateSent = message.SentAt;
-
-    var sender = Repositories.UsersRepository.GetUser(idSender);
-    var receiver = Repositories.UsersRepository.GetUser(idReceiver);
-
-
-    <div class="chat-friend" data-id="@sender.Id" data-name="@sender.FirstName @sender.LastName" data-image="@sender.Avatar" title="Sender">
-        <div class="UserSmallAvatar" style="background-image: url('@sender.Avatar')"></div>
-    </div>
-
-    <div class="chat-friend" data-id="@receiver.Id" data-name="@receiver.FirstName @receiver.LastName" data-image="@receiver.Avatar" title="Receiver">
-        <div class="UserSmallAvatar" style="background-image: url('@receiver.Avatar')"></div>
-    </div>
-
-
-
-
-
-
-
-    var fromLocal = message.FromSessionUser();
+    
+    message.FetchUsers();
+    var sender = message.Sender;
+    var receiver = message.Receiver;
 
     var date = message.SentAt.ToString("HH:mm:ss");
-    var title = fromLocal ? "Envoyé à " + date : "Reçu à " + date;
-    var messageClass = "own";
+    var title = "Envoyé à " + date;
 
-    <i class="fa-solid fa-fw fa-times-circle remove" title="Effacer le  message?"></i>
-    <div id="message-@id"
-         class="chat-message @messageClass">
-        @Helper.ParseContent(content)
+    <div class="moderation-entry" data-id="@id">
+        <div title="Envoyé par @sender.GetFullName()" class="UserSmallAvatar user" style="background-image: url('@sender.Avatar')"></div>
+        <div title="Reçu par @receiver.GetFullName()" class="UserSmallAvatar user" style="background-image: url('@receiver.Avatar')"></div>
+
+        <i class="fa-solid fa-fw fa-times-circle delete" title="Effacer ce message"></i>
+        <div class="message" title="@title">
+            @Helper.ParseContent(content)
+        </div>
     </div>
-
-
-
-
 }
 
-
+@if (Model.Count() == 0)
+{
+    <div>
+        Aucun message
+    </div>
+}
