@@ -3,3 +3,46 @@
 }
 
 <h2>Moderation</h2>
+
+<div id="ChatMessagesContainer"><!-- FRIENDS --></div>
+
+
+@section Scripts {
+    <script defer>
+        function EffacerCommentaire(targetUserId, targetUserName) {
+    popup(`Voulez-vous vraiment effacer ce commentaire ?`, function () {
+        relations.commandPost("@Url.Action("CreateRequest")", {
+            targetUserId: targetUserId
+        });
+    });
+};
+
+        function popup(message, callback = null) {
+            bootbox.confirm({
+                message: message,
+                buttons: {
+                    confirm: {
+                        label: 'Oui',
+                        className: 'btn-success'
+                    },
+                    cancel: {
+                        label: 'Non',
+                        className: 'btn-danger'
+                    }
+                },
+                callback: function (result) {
+
+                    if (result && callback != null)
+                        callback();
+                }
+            });
+        }
+        let messages = new PartialRefresh("@Url.Action("EntrerMessageModeration")", "ChatMessagesContainer", 5);
+
+
+    </script>
+
+}
+@section Styles {
+    <link rel="stylesheet" href="~/Content/RelationStyles.css" />
+}

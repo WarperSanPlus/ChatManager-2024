@@ -1,22 +1,56 @@
 @model IEnumerable<Models.Message>
 
-@foreach (var Message in Model)
+
+
+
+
+
+
+
+
+
+
+@foreach (var message in Model)
 {
-    var id = Message.Id;
-    var IdSender = Message.IdSender;
-    var IdReceiver = Message.IdReceiver;
-    var Content = Message.Content;
-    var dateDenvoy = Message.SentAt;
- 
+    var id = message.Id;
+    var idSender = message.IdSender;
+    var idReceiver = message.IdReceiver;
+    var content = message.Content;
+    var dateSent = message.SentAt;
+
+    var sender = Repositories.UsersRepository.GetUser(idSender);
+    var receiver = Repositories.UsersRepository.GetUser(idReceiver);
+
+
+    <div class="chat-friend" data-id="@sender.Id" data-name="@sender.FirstName @sender.LastName" data-image="@sender.Avatar" title="Sender">
+        <div class="UserSmallAvatar" style="background-image: url('@sender.Avatar')"></div>
+    </div>
+
+    <div class="chat-friend" data-id="@receiver.Id" data-name="@receiver.FirstName @receiver.LastName" data-image="@receiver.Avatar" title="Receiver">
+        <div class="UserSmallAvatar" style="background-image: url('@receiver.Avatar')"></div>
+    </div>
+
+
+
+
+
+
+
+    var fromLocal = message.FromSessionUser();
+
+    var date = message.SentAt.ToString("HH:mm:ss");
+    var title = fromLocal ? "Envoyé à " + date : "Reçu à " + date;
+    var messageClass = "own";
+
+    <i class="fa-solid fa-fw fa-times-circle remove" title="Effacer le  message?"></i>
+    <div id="message-@id"
+         class="chat-message @messageClass">
+        @Helper.ParseContent(content)
+    </div>
+
+
+
 
 }
 
 
-[
-  {
-    "Id": 1,
-    "IdSender": 1,
-    "IdReceiver": 3,
-    "Content": "allo",
-    "SentAt": "2024-05-07T19:31:54.8194412-04:00"
-  },

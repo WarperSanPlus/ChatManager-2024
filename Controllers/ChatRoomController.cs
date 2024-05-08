@@ -152,8 +152,20 @@ namespace Controllers
         }
 
 
+        [OnlineUsers.AdminAccess]
+        public ActionResult EntrerMessageModeration()
+        {
 
 
+            return this.View(Repositories.MessageRepository.Instance.ToList());
+        }
+        [OnlineUsers.AdminAccess]
+        public ActionResult EffacerMessage(int IDMessage)
+        {
+
+            Repositories.MessageRepository.Instance.ToList();
+            return null;
+        }
         #endregion
     }
 }
