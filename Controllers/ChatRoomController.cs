@@ -163,7 +163,8 @@ namespace Controllers
         public ActionResult EffacerMessage(int IDMessage)
         {
 
-            Repositories.MessageRepository.Instance.ToList();
+          var LeRepo =  Repositories.MessageRepository.Instance;
+            LeRepo.Delete(IDMessage);
             return null;
         }
         #endregion
