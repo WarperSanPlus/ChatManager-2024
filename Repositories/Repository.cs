@@ -366,6 +366,15 @@ namespace Repositories
             }
         }
 
+        public bool HasUserNoticed(int userId)
+        {
+            var key = this.GetType().Name + userId;
+            var serialNumber = (string)HttpContext.Current.Session[key];
+
+            HttpContext.Current.Session[key] = this._SerialNumber;
+            return serialNumber != this._SerialNumber;
+        }
+
         /// <summary>
         /// Initialise le <see cref="Repository"/> à partir du chemin donné
         /// </summary>

@@ -109,7 +109,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Attributes\AssetAttribute.cs" />
+    <Compile Include="Models\Message.cs" />
     <Compile Include="Models\RelationShip.cs" />
+    <Compile Include="Repositories\MessageRepository.cs" />
     <Compile Include="Repositories\RelationShipRepository.cs" />
     <Compile Include="Resources\Labels.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -154,6 +156,7 @@
     <Content Include="App_Data\iso-3166.txt" />
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
+    <Content Include="Content\ChatRoomStyles.css" />
     <Content Include="Content\images\ui-icons_444444_256x240.png" />
     <Content Include="Content\images\ui-icons_555555_256x240.png" />
     <Content Include="Content\images\ui-icons_777620_256x240.png" />
@@ -209,6 +212,7 @@
     <Content Include="Content\bootstrap.css.map" />
     <Content Include="App_Data\Entrys.json" />
     <Content Include="App_Data\RelationShips.json" />
+    <Content Include="App_Data\Messages.json" />
     <None Include="Properties\PublishProfiles\ChatManager20240424121303 - Web Deploy.pubxml" />
     <None Include="Properties\PublishProfiles\MDB2023 - Web Deploy.pubxml" />
     <None Include="Properties\PublishProfiles\MoviesRepository - Web Deploy.pubxml" />
@@ -272,6 +276,8 @@
     <Content Include="Views\Accounts\GetEntries.cshtml" />
     <Content Include="Views\FriendShips\GetRelations.cshtml" />
     <Content Include="Views\Accounts\Edit.cshtml" />
+    <Content Include="Views\ChatRoom\GetOnlineFriends.cshtml" />
+    <Content Include="Views\ChatRoom\GetMessages.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Views\Notifications\" />
