@@ -45,7 +45,7 @@ namespace Mail
             mail.Body = body;
             try
             {
-                client.Send(mail);
+                //client.Send(mail);
             }
             catch (Exception e)
             {
