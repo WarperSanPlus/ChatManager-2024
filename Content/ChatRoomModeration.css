@@ -34,3 +34,8 @@
     color: black;
     margin-right: 1em;
 }
+
+.message img {
+    height: 100%;
+    width: 100%;
+}
