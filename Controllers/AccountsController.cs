@@ -16,6 +16,9 @@ namespace Controllers
         public JsonResult EmailAvailable(string email)
         {
             var user = OnlineUsers.GetSessionUser();
+            if (user != null && user.IsAdmin)
+                return this.Json(true);
+
             var excludedId = user?.Id ?? 0;
             return this.Json(UsersRepository.Instance.EmailAvailable(email, excludedId));
         }
@@ -156,27 +159,27 @@ namespace Controllers
 
         public void SendEmailChangedVerification(User user, string newEmail)
         {
-            if (user.Id != 0)
-            {
-                var unverifiedEmail = UsersRepository.Instance.Add_UnverifiedEmail(user.Id, newEmail);
-                if (unverifiedEmail != null)
-                {
-                    var verificationUrl = this.Url.Action("CommitEmailChange", "Accounts", null, this.Request.Url.Scheme);
-                    var Link = @"<br/><a href='" + verificationUrl + "?code=" + unverifiedEmail.VerificationCode + @"' > Confirmez votre adresse...</a>";
+            if (user.Id == 0)
+                return;
 
-                    var Subject = "ChatManager - Confirmation de changement de courriel...";
+            var unverifiedEmail = UsersRepository.Instance.Add_UnverifiedEmail(user.Id, newEmail);
+            if (unverifiedEmail == null)
+                return;
 
-                    var Body = "Bonjour " + user.GetFullName(true) + @",<br/><br/>";
-                    Body += @"Vous avez modifié votre adresse de courriel. <br/>";
-                    Body += @"Pour que ce changement soit pris en compte, vous devez confirmer cette adresse en cliquant sur le lien suivant : <br/>";
-                    Body += Link;
-                    Body += @"<br/><br/>Ce courriel a été généré automatiquement, veuillez ne pas y répondre.";
-                    Body += @"<br/><br/>Si vous éprouvez des difficultés ou s'il s'agit d'une erreur, veuillez le signaler à <a href='mailto:"
-                         + SMTP.OwnerEmail + "'>" + SMTP.OwnerName + "</a> (Webmestre du site ChatManager)";
+            var verificationUrl = this.Url.Action("CommitEmailChange", "Accounts", null, this.Request.Url.Scheme);
+            var Link = @"<br/><a href='" + verificationUrl + "?code=" + unverifiedEmail.VerificationCode + @"' > Confirmez votre adresse...</a>";
 
-                    SMTP.SendEmail(user.GetFullName(), unverifiedEmail.Email, Subject, Body);
-                }
-            }
+            var Subject = "ChatManager - Confirmation de changement de courriel...";
+
+            var Body = "Bonjour " + user.GetFullName(true) + @",<br/><br/>";
+            Body += @"Vous avez modifié votre adresse de courriel. <br/>";
+            Body += @"Pour que ce changement soit pris en compte, vous devez confirmer cette adresse en cliquant sur le lien suivant : <br/>";
+            Body += Link;
+            Body += @"<br/><br/>Ce courriel a été généré automatiquement, veuillez ne pas y répondre.";
+            Body += @"<br/><br/>Si vous éprouvez des difficultés ou s'il s'agit d'une erreur, veuillez le signaler à <a href='mailto:"
+                    + SMTP.OwnerEmail + "'>" + SMTP.OwnerName + "</a> (Webmestre du site ChatManager)";
+
+            SMTP.SendEmail(user.GetFullName(), unverifiedEmail.Email, Subject, Body);
         }
 
         #endregion EmailChange
@@ -308,15 +311,41 @@ namespace Controllers
         [OnlineUsers.AdminAccess]
         public ActionResult Edit(int userId)
         {
-            var userToEdit = UsersRepository.GetUser(userId).Clone();
+            var userToEdit = UsersRepository.GetUser(userId);
 
-            if (userToEdit == null || userToEdit.IsAdmin)
+            if (userToEdit == null)
                 return null;
 
-            this.ViewBag.Genders = new SelectList(DB.GetRepo<Gender>().ToList(), "Id", "Name", userToEdit.GenderId);
+            userToEdit = userToEdit.Clone();
+
             this.Session["UnchangedPasswordCode"] = Guid.NewGuid().ToString().Substring(0, 12);
+            this.Session["IDsessModif"] = userId;
             userToEdit.Password = userToEdit.ConfirmPassword = (string)this.Session["UnchangedPasswordCode"];
             return this.View(userToEdit);
+        }
+        [OnlineUsers.AdminAccess]
+        [HttpPost]
+        [ValidateAntiForgeryToken()]
+        public ActionResult Edit(User user)
+        {
+            var id = (int)this.Session["IDsessModif"];
+            var oldUser = UsersRepository.Instance.Get(id);
+
+            if (this.ModelState.IsValid && oldUser != null)
+            {
+                user.Id = id;
+               
+                if(oldUser.UserTypeId == 1)
+                {
+                    user.UserTypeId = oldUser.UserTypeId;
+                }
+                user.Password = user.ConfirmPassword = oldUser.Password;
+                user.GenderId = oldUser.GenderId;
+
+                _ = UsersRepository.Instance.Update(user);
+            }
+
+            return this.Edit(id);
         }
 
         #endregion Profil
