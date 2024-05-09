@@ -156,6 +156,7 @@
     <Content Include="App_Data\iso-3166.txt" />
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
+    <Content Include="Content\ChatRoomModeration.css" />
     <Content Include="Content\ChatRoomStyles.css" />
     <Content Include="Content\images\ui-icons_444444_256x240.png" />
     <Content Include="Content\images\ui-icons_555555_256x240.png" />
@@ -278,6 +279,8 @@
     <Content Include="Views\Accounts\Edit.cshtml" />
     <Content Include="Views\ChatRoom\GetOnlineFriends.cshtml" />
     <Content Include="Views\ChatRoom\GetMessages.cshtml" />
+    <Content Include="Views\ChatRoom\ModerationCommentaire.cshtml" />
+    <Content Include="Views\ChatRoom\EntrerMessageModeration.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Views\Notifications\" />

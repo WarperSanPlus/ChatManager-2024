@@ -139,5 +139,26 @@ namespace Controllers
         }
 
         #endregion
+
+        #region Moderation
+
+        [OnlineUsers.AdminAccess]
+        public ActionResult ModerationCommentaire() => this.View();
+
+
+        [OnlineUsers.AdminAccess]
+        public ActionResult EntrerMessageModeration(bool forceRefresh = false)
+        {
+            var messageRepo = MessageRepository.Instance;
+
+            if (!forceRefresh && !messageRepo.HasChanged && !UsersRepository.Instance.HasChanged && !RelationShipRepository.Instance.HasChanged)
+                return null;
+
+            var messages = messageRepo.ToList().OrderByDescending(m => m.SentAt);
+
+            return this.PartialView(messages);
+        }
+
+        #endregion
     }
 }

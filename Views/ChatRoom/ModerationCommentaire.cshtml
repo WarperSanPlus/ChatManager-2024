@@ -1,0 +1,55 @@
+@{
+    ViewBag.Title = "Moderation";
+}
+
+<h2>Modération</h2>
+<hr />
+
+<div id="ChatMessagesContainer"><!-- MESSAGES --></div>
+
+@section Scripts {
+    <script defer>
+        let onMessageRefresh = () => {
+            $(".delete").click(function () {
+                EffacerCommentaire($(this).parent(".moderation-entry").data("id"));
+            });
+        };
+
+        function EffacerCommentaire(idMessage) {
+            popup(`Voulez-vous vraiment effacer ce message?`, function () {
+                messages.commandPost("@Url.Action("ModifyMessage")", {
+                    id: idMessage,
+                    content: null
+                });
+            });
+        };
+
+        function popup(message, callback = null) {
+            bootbox.confirm({
+                message: message,
+                buttons: {
+                    confirm: {
+                        label: 'Oui',
+                        className: 'btn-success'
+                    },
+                    cancel: {
+                        label: 'Non',
+                        className: 'btn-danger'
+                    }
+                },
+                callback: function (result) {
+
+                    if (result && callback != null)
+                        callback();
+                }
+            });
+        };
+
+        let messages = new PartialRefresh("@Url.Action("EntrerMessageModeration")", "ChatMessagesContainer", 5, onMessageRefresh);
+    </script>
+
+}
+@section Styles {
+    <link rel="stylesheet" href="~/Content/ChatRoomStyles.css" />
+    <link rel="stylesheet" href="~/Content/ChatRoomModeration.css" />
+}

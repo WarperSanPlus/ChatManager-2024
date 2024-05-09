@@ -1,0 +1,41 @@
+﻿/* PARENT */
+.moderation-entry {
+    display: flex;
+    align-items: center;
+
+    margin-top: 0.5em;
+}
+
+/* USER */
+.user {
+    margin: 0 0.5em;
+}
+
+/* DELETE */
+.delete {
+    height: fit-content;
+    margin: 0 0.5em;
+
+    color: #337AB7;
+    font-size: 1.5em;
+    cursor: pointer;
+}
+
+.delete:hover {
+    color: #2d6a9f;
+}
+
+/* MESSAGE */
+.message {
+    flex: 1;
+    background-color: var(--own);
+    padding: 1em;
+    border-radius: 1em;
+    color: black;
+    margin-right: 1em;
+}
+
+.message img {
+    height: 100%;
+    width: 100%;
+}
